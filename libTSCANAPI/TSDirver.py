@@ -2,9 +2,11 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 11:21:33
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-10 20:32:44
+LastEditTime: 2023-06-10 07:22:33
 '''
-from ctypes import WinDLL,windll,cdll
+from ctypes import cdll
+
+
 import os
 import platform
 import sys
@@ -15,6 +17,7 @@ _arch, _os = platform.architecture()
 _os = platform.system()
 _is_windows, _is_linux = False, False
 if 'windows' in _os.lower():
+    from ctypes import WinDLL,windll
     _is_windows = True
     if _arch == '32bit':
         if sys.version_info < (3,9):
@@ -30,7 +33,8 @@ if 'windows' in _os.lower():
 elif 'linux' in _os.lower():
     _is_linux = True
     if _arch == '64bit':
-        shutil.copy(os.path.join(_curr_path, 'linux/libTSH.so'),'./')
+        if not os.path.exists('./libTSH.so'):
+            shutil.copy(os.path.join(_curr_path, 'linux/libTSH.so'),'./')
         _lib_path = os.path.join(_curr_path, 'linux/libTSCANApiOnLinux.so')
     else:
         _lib_path = None

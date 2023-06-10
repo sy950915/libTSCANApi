@@ -2,10 +2,12 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 10:21:17
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-10 15:25:23
+LastEditTime: 2023-06-10 22:28:05
 '''
-from ctypes import Structure,c_char,c_int32,c_bool,c_uint8,c_int64,c_uint64,c_uint32,c_uint16,c_double,c_char_p,byref,string_at,string_at,CDLL,CFUNCTYPE,POINTER,pointer,c_void_p,c_float,c_int16,c_int8,WINFUNCTYPE,c_size_t
+from ctypes import Structure,c_char,c_int32,c_bool,c_uint8,c_int64,c_uint64,c_uint32,c_uint16,c_double,c_char_p,byref,string_at,string_at,CDLL,CFUNCTYPE,POINTER,pointer,c_void_p,c_float,c_int16,c_int8,c_size_t
 from .TSDirver import _os
+if 'windows' in _os.lower():
+    from ctypes import WINFUNCTYPE
 
 u8 = c_uint8
 pu8 = POINTER(c_uint8)
@@ -465,30 +467,15 @@ PLibTrigger_def = POINTER(TLibTrigger_def)
 #回调函数
 if 'windows' in _os.lower():
     OnTx_RxFUNC_CAN = WINFUNCTYPE(None, PCAN)
-else:
-    OnTx_RxFUNC_CAN = CFUNCTYPE(None, PCAN)
-
-if 'windows' in _os.lower():
     OnTx_RxFUNC_Flexray = WINFUNCTYPE(None, PFlexray)
-else:
-    OnTx_RxFUNC_Flexray = CFUNCTYPE(None, PFlexray)
-
-if 'windows' in _os.lower():
     OnTx_RxFUNC_LIN = WINFUNCTYPE(None, PLIN)
-else:
-    OnTx_RxFUNC_LIN = CFUNCTYPE(None, PLIN)
-
-if 'windows' in _os.lower():
     OnTx_RxFUNC_CANFD = WINFUNCTYPE(None, PCANFD)
-else:
-    OnTx_RxFUNC_CANFD = CFUNCTYPE(None, PCANFD)
-
-if 'windows' in _os.lower():
     On_Connect_FUNC = WINFUNCTYPE(None,ps64)
-else:
-    On_Connect_FUNC = CFUNCTYPE(None, ps64)
-
-if 'windows' in _os.lower():
     On_disConnect_FUNC = WINFUNCTYPE(None, ps64)
 else:
+    OnTx_RxFUNC_CAN = CFUNCTYPE(None, PCAN)
+    OnTx_RxFUNC_Flexray = CFUNCTYPE(None, PFlexray)
+    OnTx_RxFUNC_LIN = CFUNCTYPE(None, PLIN)
+    OnTx_RxFUNC_CANFD = CFUNCTYPE(None, PCANFD)
+    On_Connect_FUNC = CFUNCTYPE(None, ps64)
     On_disConnect_FUNC = CFUNCTYPE(None, ps64)
