@@ -14,7 +14,7 @@ try :
         file_data = ""
         with open(file, "r", encoding="utf-8") as f:
             for line in f:
-                if old_str in line and (not new_str in line):
+                if old_str in line and (not Python_CAN_Config in line):
                     line = line.replace(old_str,new_str)
                 file_data += line
         with open(file,"w",encoding="utf-8") as f:
