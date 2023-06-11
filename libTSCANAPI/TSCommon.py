@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 11:59:15
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-11 15:24:16
+LastEditTime: 2023-06-11 18:47:18
 '''
 
 from .TSStructure import *  
@@ -47,6 +47,77 @@ finalize_lib_tscan.argtypes = []
 finalize_lib_tscan.restype = None 
 
 
+# 注册连接回调函数 
+'''
+# 连接
+"""
+    Args:
+        CallBack:On_Connect_FUNC
+    Returns:
+        r:error code
+    example:
+        def on_connect(obj):
+            print("connect successed")
+        CallBack = On_Connect_FUNC(on_connect)
+        tscan_register_event_connected(CallBack)
+"""
+'''
+tscan_register_event_connected = dll.tscan_register_event_connected
+tscan_register_event_connected.argtypes = [On_Connect_FUNC]
+tscan_register_event_connected.restype = TS_ReturnType 
+tscan_register_event_connected.errcheck = check_status_operation
+# 注册断开连接回调函数 
+"""
+    Args:
+        CallBack:On_disConnect_FUNC
+    Returns:
+        r:error code
+    example:
+        def on_connect(obj):
+            print("connect successed")
+        CallBack = On_disConnect_FUNC(on_connect)
+        tscan_register_event_disconnected(CallBack)
+"""
+tscan_register_event_disconnected = dll.tscan_register_event_disconnected
+tscan_register_event_disconnected.argtypes = [On_disConnect_FUNC]
+tscan_register_event_disconnected.restype = TS_ReturnType 
+tscan_register_event_disconnected.errcheck = check_status_operation
+
+# 注销连接回调函数 
+"""
+    Args:
+        CallBack:On_Connect_FUNC
+    Returns:
+        r:error code
+    example:
+        def on_connect(obj):
+            print("connect successed")
+        CallBack = On_Connect_FUNC(on_connect)
+        tscan_register_event_connected(CallBack)
+        tscan_unregister_event_connected(CallBack)
+"""
+tscan_unregister_event_connected = dll.tscan_unregister_event_connected
+tscan_unregister_event_connected.argtypes = [On_Connect_FUNC]
+tscan_unregister_event_connected.restype = TS_ReturnType 
+tscan_unregister_event_connected.errcheck = check_status_operation
+
+# 注销断开连接回调函数 
+"""
+    Args:
+        CallBack:On_Connect_FUNC
+    Returns:
+        r:error code
+    example:
+        def on_connect(obj):
+            print("connect successed")
+        CallBack = On_disConnect_FUNC(on_connect)
+        tscan_register_event_disconnected(CallBack)
+        tscan_unregister_event_disconnected(CallBack)
+"""
+tscan_unregister_event_disconnected = dll.tscan_unregister_event_disconnected
+tscan_unregister_event_disconnected.argtypes = [On_disConnect_FUNC]
+tscan_unregister_event_disconnected.restype = TS_ReturnType 
+tscan_unregister_event_disconnected.errcheck = check_status_operation
 # 连接
 """
     Args:
@@ -64,342 +135,30 @@ tsapp_connect.argtypes = [c_char_p,psize_t]
 tsapp_connect.restype = TS_ReturnType
 tsapp_connect.errcheck = check_status_operation
 
-# only windows supported now
-if 'windows' in _os.lower():
-    # 增加CAN过滤报文
-    tsfifo_add_can_canfd_pass_filter = dll.tsfifo_add_can_canfd_pass_filter
-    tsfifo_add_can_canfd_pass_filter.argtypes = [size_t,s32,s32,c_bool]
-    tsfifo_add_can_canfd_pass_filter.restype = TS_ReturnType
-    tsfifo_add_can_canfd_pass_filter.errcheck = check_status_operation
-
-    # 删除CAN过滤报文
-    tsfifo_add_can_canfd_pass_filter = dll.tsfifo_add_can_canfd_pass_filter
-    tsfifo_add_can_canfd_pass_filter.argtypes = [size_t,s32,s32]
-    tsfifo_add_can_canfd_pass_filter.restype = TS_ReturnType
-    tsfifo_add_can_canfd_pass_filter.errcheck = check_status_operation
-
-    # 增加LIN过滤报文
-    tsfifo_add_can_canfd_pass_filter = dll.tsfifo_add_can_canfd_pass_filter
-    tsfifo_add_can_canfd_pass_filter.argtypes = [size_t,s32,s32]
-    tsfifo_add_can_canfd_pass_filter.restype = TS_ReturnType
-    tsfifo_add_can_canfd_pass_filter.errcheck = check_status_operation
-
-    # 删除LIN过滤报文
-    tsfifo_add_can_canfd_pass_filter = dll.tsfifo_add_can_canfd_pass_filter
-    tsfifo_add_can_canfd_pass_filter.argtypes = [size_t,s32,s32]
-    tsfifo_add_can_canfd_pass_filter.restype = TS_ReturnType
-    tsfifo_add_can_canfd_pass_filter.errcheck = check_status_operation
-
-
-    # 设置当前硬件存在CAN的通道数量
-    """
-        Args:
-            AHandle (c_size_t): tsapp_connect retrun handle
-        Returns:
-            r:error code
-        
-        example:
-            AHandle = c_size_t(0)
-            ACount = 0
-            r = tsapp_connect(b"1234568798DFE",AHandle) or tsapp_connect("",AHandle) 
-            if(r==0 or r==5):  #0 or 5 :connect success
-                print(AHandle)
-                r = tscan_get_can_channel_count(AHandle,ACount)
-    """
-
-    tscan_get_can_channel_count = dll.tscan_get_can_channel_count
-    tscan_get_can_channel_count.argtypes = [size_t,ps32]
-    tscan_get_can_channel_count.restype = TS_ReturnType
-    tscan_get_can_channel_count.errcheck = check_status_operation
-
-
-    # 设置当前硬件存在LIN的通道数量
-    """
-        Args:
-            AHandle (c_size_t): tsapp_connect retrun handle
-        Returns:
-            r:error code
-        
-        example:
-            AHandle = c_size_t(0)
-            ACount = 0
-            r = tsapp_connect(b"1234568798DFE",AHandle) or tsapp_connect("",AHandle) 
-            if(r==0 or r==5):  #0 or 5 :connect success
-                print(AHandle)
-                r = tscan_get_lin_channel_count(AHandle,ACount)
-    """
-    tscan_get_lin_channel_count = dll.tscan_get_lin_channel_count
-    tscan_get_lin_channel_count.argtypes = [size_t,ps32]
-    tscan_get_lin_channel_count.restype = TS_ReturnType
-    tscan_get_lin_channel_count.errcheck = check_status_operation
-
-
-    # 设置当前硬件存在Flexray的通道数量
-    """
-        Args:
-            AHandle (c_size_t): tsapp_connect retrun handle
-        Returns:
-            r:error code
-        
-        example:
-            AHandle = c_size_t(0)
-            ACount = 0
-            r = tsapp_connect(b"1234568798DFE",AHandle) or tsapp_connect("",AHandle) 
-            if(r==0 or r==5):  #0 or 5 :connect success
-                print(AHandle)
-                r = tscan_get_flexray_channel_count(AHandle,ACount)
-    """
-    tscan_get_flexray_channel_count = dll.tscan_get_flexray_channel_count
-    tscan_get_flexray_channel_count.argtypes = [size_t,ps32]
-    tscan_get_flexray_channel_count.restype = TS_ReturnType
-    tscan_get_flexray_channel_count.errcheck = check_status_operation
-    """
-    configure can regs include baudrate and termination resistor
+# 断开指定连接
+"""
+    disconnect by handle
     Args:
-        ADeviceHandle (c_size_t): tsapp_connect retrun handle
-        AIdxChn (CHANNEL_INDEX): chn_index
-        ABaudrateKbps (float): baudrate
-        ASEG1 (int): Phase buffer section1
-        ASEG2 (int): Phase buffer section2
-        APrescaler (int): APrescaler
-        ASJ2 (int): BTL count
-        AOnlyListen (c_uint32): is only listen
-        A120 (c_uint32): enable termination resistor 
+        AHandle (c_size_t): tsapp_connect retrun handle
 
     Returns:
         error code
     
     example:
-        tsapp_configure_can_regs(handle, CHANNEL_INDEX.CHN1, 500, 63, 16, 1, 80, 0, A120.A120_ENABLE)
-    """
-    tsapp_configure_can_regs = dll.tscan_configure_can_regs
-    tsapp_configure_can_regs.argtypes = [size_t,s32, c_float, s32,s32,s32,s32,c_bool, c_bool]
-    tsapp_configure_can_regs.restype = TS_ReturnType
-    tsapp_configure_can_regs.errcheck = check_status_operation
+        tsapp_disconnect_by_handle(handle)
+"""
+tsapp_disconnect_by_handle = dll.tscan_disconnect_by_handle
+tsapp_disconnect_by_handle.argtypes = [size_t]  
+tsapp_disconnect_by_handle.restype = TS_ReturnType
+tsapp_disconnect_by_handle.errcheck = check_status_operation
 
-    """
-    configure canfd regs include baudrate and termination resistor
-
-    Args:
-        ADeviceHandle (c_size_t): tsapp_connect retrun handle
-        AIdxChn (CHANNEL_INDEX): chn_index
-        AArbBaudrateKbps (float): Arbbaudrate
-        AArbSEG1 (int): Arb Phase buffer section1
-        AArbSEG2 (int): Arb Phase buffer section2
-        AArbPrescaler (int): ArbPrescaler
-        AArbSJ2 (int): Arb BTL count
-        ADataBaudrateKbps (float): Databaudrate
-        ADataSEG1 (int): Data Phase buffer section1
-        ADataSEG2 (int): Data Phase buffer section2
-        ADataPrescaler (int): Data Prescaler
-        ADataSJ2 (int): Data BTL count
-        AControllerType (TLIBCANFDControllerType): can isocanfd non-isocanfd
-        AControllerMode (TLIBCANFDControllerMode): normol ackoff
-        AInstallTermResistor120Ohm (c_bool): enable termination resistor 
-
-    Returns:
-        error code
-    example:
-        error = tsapp_canfd_config(handle, CHANNEL_INDEX.CHN1, 500, 63, 16, 1, 80, 2000,63,16,1,80,TLIBCANFDControllerType.lfdtCAN,TLIBCANFDControllerMode.lfdmNormal, A120.A120_ENABLE)
-    """
-    tsapp_configure_canfd_regs = dll.tscan_configure_canfd_regs
-    tsapp_configure_canfd_regs.argtypes = [size_t,s32, c_float, s32,s32,s32,s32,c_float, s32,s32,s32,s32,s32,s32, c_bool]
-    tsapp_configure_canfd_regs.restype = TS_ReturnType
-    tsapp_configure_canfd_regs.errcheck = check_status_operation
-# UDS诊断
-# CAN
-# 创建诊断服务
-# only windows supported now
-    __tsdiag_can_create_mod = dll.tsdiag_can_create
-    __tsdiag_can_create_mod.argtypes = [pu8,s32,u8,u8,s32,c_bool,s32,c_bool,s32,c_bool]
-    __tsdiag_can_create_mod.restype = TS_ReturnType
-    __tsdiag_can_create_mod.errcheck = check_status_operation
-
-    __tsdiag_can_attach_to_tscan_tool = dll.tsdiag_can_attach_to_tscan_tool
-    __tsdiag_can_attach_to_tscan_tool.argtypes = [s32,size_t]
-    __tsdiag_can_attach_to_tscan_tool.restype = TS_ReturnType
-    __tsdiag_can_attach_to_tscan_tool.errcheck = check_status_operation
-
-    def tsdiag_can_create(HwHandle,pDiagModuleIndex: c_int32, AChnIndex: CHANNEL_INDEX, ASupportFDCAN: u8,AMaxDLC: u8,ARequestID: c_uint32, ARequestIDIsStd: bool, AResponseID: c_uint32, AResponseIDIsStd: bool,AFunctionID: c_uint32, AFunctionIDIsStd: bool):
-        """
-            udsHandle = c_int8(0)
-            ChnIndex = CHANNEL_INDEX.CHN1
-            ASupportFD  = c_byte(1)
-            AMaxdlc = c_byte(8)
-            reqID = c_int32(0x7e0)
-            ARequestIDIsStd = False
-            resID = c_int32(0x7e3)
-            resIsStd = False
-            AFctID = c_int32(0x7df)
-            fctIsStd = False
-            tsdiag_can_create(HWHandle,udsHandle,ChnIndex,ASupportFD,AMaxdlc,reqID,resIsStd,resID,resIsStd,AFctID,fctIsStd)
-            """
-        try:
-            dlc = DLC_DATA_BYTE_CNT.index(AMaxDLC)
-        except:
-            dlc = AMaxDLC
-        r = __tsdiag_can_create_mod(pDiagModuleIndex, AChnIndex, ASupportFDCAN, dlc, ARequestID,
-                                    ARequestIDIsStd,
-                                    AResponseID, AResponseIDIsStd, AFunctionID, AFunctionIDIsStd)
-        if r != 0:
-            return r
-        return __tsdiag_can_attach_to_tscan_tool(pDiagModuleIndex, HwHandle)
-
-
-    # 删除指定诊断服务
-    tsdiag_can_delete = dll.tsdiag_can_delete
-    tsdiag_can_delete.argtypes = [u8]
-    tsdiag_can_delete.restype = TS_ReturnType
-    tsdiag_can_delete.errcheck = check_status_operation
-
-    # 删除所有诊断服务
-    tsdiag_can_delete_all = dll.tsdiag_can_delete_all
-    tsdiag_can_delete_all.argtypes = []
-    tsdiag_can_delete_all.restype = TS_ReturnType
-    tsdiag_can_delete_all.errcheck = check_status_operation
-
-    # 功能寻址 请求
-    tstp_can_send_functional = dll.tstp_can_send_functional
-    tstp_can_send_functional.argtypes = [u8,pu8,s32]
-    tstp_can_send_functional.restype = TS_ReturnType
-    tstp_can_send_functional.errcheck = check_status_operation
-
-    # 请求id 发送数据
-    tstp_can_send_request = dll.tstp_can_send_request
-    tstp_can_send_request.argtypes = [u8,pu8,s32]
-    tstp_can_send_request.restype = TS_ReturnType
-    tstp_can_send_request.errcheck = check_status_operation
-
-    # 请求并接收数据
-    tstp_can_request_and_get_response = dll.tstp_can_request_and_get_response
-    tstp_can_send_request.argtypes = [u8,pu8,s32,pu8,ps32]
-    tstp_can_send_request.restype = TS_ReturnType
-    tstp_can_send_request.errcheck = check_status_operation
-
-    # 相关诊断服务
-    # 10 服务
-    tsdiag_can_session_control = dll.tsdiag_can_session_control
-    tsdiag_can_session_control.argtypes = [u8,u8]
-    tsdiag_can_session_control.restype = TS_ReturnType
-    tsdiag_can_session_control.errcheck = check_status_operation
-
-    # 31
-    tsdiag_can_routine_control = dll.tsdiag_can_routine_control
-    tsdiag_can_routine_control.argtypes = [u8,u8,u16]
-    tsdiag_can_routine_control.restype = TS_ReturnType
-    tsdiag_can_routine_control.errcheck = check_status_operation
-
-    # 28
-    tsdiag_can_communication_control = dll.tsdiag_can_communication_control
-    tsdiag_can_communication_control.argtypes = [u8,u8]
-    tsdiag_can_communication_control.restype = TS_ReturnType
-    tsdiag_can_communication_control.errcheck = check_status_operation
-
-    # 27 get seed
-    tsdiag_can_security_access_request_seed = dll.tsdiag_can_security_access_request_seed
-    tsdiag_can_security_access_request_seed.argtypes = [u8,s32,pu8,ps32]
-    tsdiag_can_security_access_request_seed.restype = TS_ReturnType
-    tsdiag_can_security_access_request_seed.errcheck = check_status_operation
-
-    # 27 send key
-    tsdiag_can_security_access_send_key = dll.tsdiag_can_security_access_send_key
-    tsdiag_can_security_access_send_key.argtypes = [u8,s32,pu8,ps32]
-    tsdiag_can_security_access_send_key.restype = TS_ReturnType
-    tsdiag_can_security_access_send_key.errcheck = check_status_operation
-
-    # 34
-    tsdiag_can_request_download = dll.tsdiag_can_request_download
-    tsdiag_can_request_download.argtypes = [u8,u32,u32]
-    tsdiag_can_request_download.restype = TS_ReturnType
-    tsdiag_can_request_download.errcheck = check_status_operation
-
-    # 35
-    tsdiag_can_request_upload = dll.tsdiag_can_request_upload
-    tsdiag_can_request_upload.argtypes = [u8,s32,s32]
-    tsdiag_can_request_upload.restype = TS_ReturnType
-    tsdiag_can_request_upload.errcheck = check_status_operation
-
-    # 36
-    tsdiag_can_transfer_data = dll.tsdiag_can_transfer_data
-    tsdiag_can_transfer_data.argtypes = [u8,pu8,s32,s32]
-    tsdiag_can_transfer_data.restype = TS_ReturnType
-    tsdiag_can_transfer_data.errcheck = check_status_operation
-
-    # 37
-    tsdiag_can_request_transfer_exit = dll.tsdiag_can_request_transfer_exit
-    tsdiag_can_request_transfer_exit.argtypes = [u8]
-    tsdiag_can_request_transfer_exit.restype = TS_ReturnType
-    tsdiag_can_request_transfer_exit.errcheck = check_status_operation
-
-    # 2E
-    tsdiag_can_write_data_by_identifier = dll.tsdiag_can_write_data_by_identifier
-    tsdiag_can_write_data_by_identifier.argtypes = [u8,u16,pu8,s32]
-    tsdiag_can_write_data_by_identifier.restype = TS_ReturnType
-    tsdiag_can_write_data_by_identifier.errcheck = check_status_operation
-
-    # 22
-    tsdiag_can_read_data_by_identifier = dll.tsdiag_can_read_data_by_identifier
-    tsdiag_can_read_data_by_identifier.argtypes = [u8,u16,pu8,ps32]
-    tsdiag_can_read_data_by_identifier.restype = TS_ReturnType
-    tsdiag_can_read_data_by_identifier.errcheck = check_status_operation
-
-    # LIN 诊断
-    # 诊断请求
-    tstp_lin_master_request = dll.tstp_lin_master_request
-    tstp_lin_master_request.argtypes = [s32,u8,pu8,s32,s32]
-    tstp_lin_master_request.restype = TS_ReturnType
-    tstp_lin_master_request.errcheck = check_status_operation
-    # 
-    tstp_lin_master_request_intervalms = dll.tstp_lin_master_request_intervalms
-    tstp_lin_master_request_intervalms.argtypes = [s32,u16]
-    tstp_lin_master_request_intervalms.restype = TS_ReturnType
-    tstp_lin_master_request_intervalms.errcheck = check_status_operation
-    # 重启
-    tstp_lin_reset = dll.tstp_lin_reset
-    tstp_lin_reset.argtypes = [s32]
-    tstp_lin_reset.restype = TS_ReturnType
-    tstp_lin_reset.errcheck = check_status_operation
-
-    # 从节点响应
-    tstp_lin_slave_response_intervalms = dll.tstp_lin_slave_response_intervalms
-    tstp_lin_slave_response_intervalms.argtypes = [s32,u16]
-    tstp_lin_slave_response_intervalms.restype = TS_ReturnType
-    tstp_lin_slave_response_intervalms.errcheck = check_status_operation
-
-    # 22
-    tsdiag_lin_read_data_by_identifier = dll.tsdiag_lin_read_data_by_identifier
-    tsdiag_lin_read_data_by_identifier.argtypes = [s32,u8,u16,pu8,pu8,ps32,s32]
-    tsdiag_lin_read_data_by_identifier.restype = TS_ReturnType
-    tsdiag_lin_read_data_by_identifier.errcheck = check_status_operation
-
-    # 2E
-    tsdiag_lin_write_data_by_identifier = dll.tsdiag_lin_write_data_by_identifier
-    tsdiag_lin_write_data_by_identifier.argtypes = [s32,u8,u16,pu8,s32,pu8,pu8,ps32,s32]
-    tsdiag_lin_write_data_by_identifier.restype = TS_ReturnType
-    tsdiag_lin_write_data_by_identifier.errcheck = check_status_operation
-
-    # 10
-    tsdiag_lin_session_control = dll.tsdiag_lin_session_control
-    tsdiag_lin_session_control.argtypes = [s32,u8,u8,s32]
-    tsdiag_lin_session_control.restype = TS_ReturnType
-    tsdiag_lin_session_control.errcheck = check_status_operation
-
-    # 
-    tsdiag_lin_fault_memory_clear = dll.tsdiag_lin_fault_memory_clear
-    tsdiag_lin_fault_memory_clear.argtypes = [s32,u8,u8,s32]
-    tsdiag_lin_fault_memory_clear.restype = TS_ReturnType
-    tsdiag_lin_fault_memory_clear.errcheck = check_status_operation
-
-    # 
-    tsdiag_lin_fault_memory_read = dll.tsdiag_lin_fault_memory_read
-    tsdiag_lin_fault_memory_read.argtypes = [s32,u8,u8,s32]
-    tsdiag_lin_fault_memory_read.restype = TS_ReturnType
-    tsdiag_lin_fault_memory_read.errcheck = check_status_operation
-
-
-    
-
-
+# 断开所有设备连接
+""" tsapp_disconnect_all() """
+tsapp_disconnect_all = dll.tscan_disconnect_all_devices
+tsapp_disconnect_all.argtypes = []  
+tsapp_disconnect_all.restype = TS_ReturnType
+tsapp_disconnect_all.errcheck = check_status_operation
+tsapp_disconnect_all
 
 # CAN 通道参数配置
 """
@@ -526,30 +285,7 @@ tscan_get_device_info.restype = TS_ReturnType
 tscan_get_device_info.errcheck = check_status_operation
 
 
-# 断开指定连接
-"""
-    disconnect by handle
-    Args:
-        AHandle (c_size_t): tsapp_connect retrun handle
 
-    Returns:
-        error code
-    
-    example:
-        tsapp_disconnect_by_handle(handle)
-"""
-tsapp_disconnect_by_handle = dll.tscan_disconnect_by_handle
-tsapp_disconnect_by_handle.argtypes = [size_t]  
-tsapp_disconnect_by_handle.restype = TS_ReturnType
-tsapp_disconnect_by_handle.errcheck = check_status_operation
-
-# 断开所有设备连接
-""" tsapp_disconnect_all() """
-tsapp_disconnect_all = dll.tscan_disconnect_all_devices
-tsapp_disconnect_all.argtypes = []  
-tsapp_disconnect_all.restype = TS_ReturnType
-tsapp_disconnect_all.errcheck = check_status_operation
-tsapp_disconnect_all
 
 # 注销所有预发送事件
 tscan_unregister_pretx_events_all = dll.tscan_unregister_pretx_events_all
@@ -1760,6 +1496,339 @@ tsapp_unregister_event_flexray = dll.tsflexray_unregister_event_flexray
 tsapp_unregister_event_flexray.argtypes = [size_t,OnTx_RxFUNC_Flexray]  
 tsapp_unregister_event_flexray.restype = TS_ReturnType
 tsapp_unregister_event_flexray.errcheck = check_status_operation
+
+
+# only windows supported now
+if 'windows' in _os.lower():
+    # 增加CAN过滤报文
+    tsfifo_add_can_canfd_pass_filter = dll.tsfifo_add_can_canfd_pass_filter
+    tsfifo_add_can_canfd_pass_filter.argtypes = [size_t,s32,s32,c_bool]
+    tsfifo_add_can_canfd_pass_filter.restype = TS_ReturnType
+    tsfifo_add_can_canfd_pass_filter.errcheck = check_status_operation
+
+    # 删除CAN过滤报文
+    tsfifo_add_can_canfd_pass_filter = dll.tsfifo_add_can_canfd_pass_filter
+    tsfifo_add_can_canfd_pass_filter.argtypes = [size_t,s32,s32]
+    tsfifo_add_can_canfd_pass_filter.restype = TS_ReturnType
+    tsfifo_add_can_canfd_pass_filter.errcheck = check_status_operation
+
+    # 增加LIN过滤报文
+    tsfifo_add_can_canfd_pass_filter = dll.tsfifo_add_can_canfd_pass_filter
+    tsfifo_add_can_canfd_pass_filter.argtypes = [size_t,s32,s32]
+    tsfifo_add_can_canfd_pass_filter.restype = TS_ReturnType
+    tsfifo_add_can_canfd_pass_filter.errcheck = check_status_operation
+
+    # 删除LIN过滤报文
+    tsfifo_add_can_canfd_pass_filter = dll.tsfifo_add_can_canfd_pass_filter
+    tsfifo_add_can_canfd_pass_filter.argtypes = [size_t,s32,s32]
+    tsfifo_add_can_canfd_pass_filter.restype = TS_ReturnType
+    tsfifo_add_can_canfd_pass_filter.errcheck = check_status_operation
+
+
+    # 设置当前硬件存在CAN的通道数量
+    """
+        Args:
+            AHandle (c_size_t): tsapp_connect retrun handle
+        Returns:
+            r:error code
+        
+        example:
+            AHandle = c_size_t(0)
+            ACount = 0
+            r = tsapp_connect(b"1234568798DFE",AHandle) or tsapp_connect("",AHandle) 
+            if(r==0 or r==5):  #0 or 5 :connect success
+                print(AHandle)
+                r = tscan_get_can_channel_count(AHandle,ACount)
+    """
+
+    tscan_get_can_channel_count = dll.tscan_get_can_channel_count
+    tscan_get_can_channel_count.argtypes = [size_t,ps32]
+    tscan_get_can_channel_count.restype = TS_ReturnType
+    tscan_get_can_channel_count.errcheck = check_status_operation
+
+
+    # 设置当前硬件存在LIN的通道数量
+    """
+        Args:
+            AHandle (c_size_t): tsapp_connect retrun handle
+        Returns:
+            r:error code
+        
+        example:
+            AHandle = c_size_t(0)
+            ACount = 0
+            r = tsapp_connect(b"1234568798DFE",AHandle) or tsapp_connect("",AHandle) 
+            if(r==0 or r==5):  #0 or 5 :connect success
+                print(AHandle)
+                r = tscan_get_lin_channel_count(AHandle,ACount)
+    """
+    tscan_get_lin_channel_count = dll.tscan_get_lin_channel_count
+    tscan_get_lin_channel_count.argtypes = [size_t,ps32]
+    tscan_get_lin_channel_count.restype = TS_ReturnType
+    tscan_get_lin_channel_count.errcheck = check_status_operation
+
+
+    # 设置当前硬件存在Flexray的通道数量
+    """
+        Args:
+            AHandle (c_size_t): tsapp_connect retrun handle
+        Returns:
+            r:error code
+        
+        example:
+            AHandle = c_size_t(0)
+            ACount = 0
+            r = tsapp_connect(b"1234568798DFE",AHandle) or tsapp_connect("",AHandle) 
+            if(r==0 or r==5):  #0 or 5 :connect success
+                print(AHandle)
+                r = tscan_get_flexray_channel_count(AHandle,ACount)
+    """
+    tscan_get_flexray_channel_count = dll.tscan_get_flexray_channel_count
+    tscan_get_flexray_channel_count.argtypes = [size_t,ps32]
+    tscan_get_flexray_channel_count.restype = TS_ReturnType
+    tscan_get_flexray_channel_count.errcheck = check_status_operation
+    """
+    configure can regs include baudrate and termination resistor
+    Args:
+        ADeviceHandle (c_size_t): tsapp_connect retrun handle
+        AIdxChn (CHANNEL_INDEX): chn_index
+        ABaudrateKbps (float): baudrate
+        ASEG1 (int): Phase buffer section1
+        ASEG2 (int): Phase buffer section2
+        APrescaler (int): APrescaler
+        ASJ2 (int): BTL count
+        AOnlyListen (c_uint32): is only listen
+        A120 (c_uint32): enable termination resistor 
+
+    Returns:
+        error code
+    
+    example:
+        tsapp_configure_can_regs(handle, CHANNEL_INDEX.CHN1, 500, 63, 16, 1, 80, 0, A120.A120_ENABLE)
+    """
+    tsapp_configure_can_regs = dll.tscan_configure_can_regs
+    tsapp_configure_can_regs.argtypes = [size_t,s32, c_float, s32,s32,s32,s32,c_bool, c_bool]
+    tsapp_configure_can_regs.restype = TS_ReturnType
+    tsapp_configure_can_regs.errcheck = check_status_operation
+
+    """
+    configure canfd regs include baudrate and termination resistor
+
+    Args:
+        ADeviceHandle (c_size_t): tsapp_connect retrun handle
+        AIdxChn (CHANNEL_INDEX): chn_index
+        AArbBaudrateKbps (float): Arbbaudrate
+        AArbSEG1 (int): Arb Phase buffer section1
+        AArbSEG2 (int): Arb Phase buffer section2
+        AArbPrescaler (int): ArbPrescaler
+        AArbSJ2 (int): Arb BTL count
+        ADataBaudrateKbps (float): Databaudrate
+        ADataSEG1 (int): Data Phase buffer section1
+        ADataSEG2 (int): Data Phase buffer section2
+        ADataPrescaler (int): Data Prescaler
+        ADataSJ2 (int): Data BTL count
+        AControllerType (TLIBCANFDControllerType): can isocanfd non-isocanfd
+        AControllerMode (TLIBCANFDControllerMode): normol ackoff
+        AInstallTermResistor120Ohm (c_bool): enable termination resistor 
+
+    Returns:
+        error code
+    example:
+        error = tsapp_canfd_config(handle, CHANNEL_INDEX.CHN1, 500, 63, 16, 1, 80, 2000,63,16,1,80,TLIBCANFDControllerType.lfdtCAN,TLIBCANFDControllerMode.lfdmNormal, A120.A120_ENABLE)
+    """
+    tsapp_configure_canfd_regs = dll.tscan_configure_canfd_regs
+    tsapp_configure_canfd_regs.argtypes = [size_t,s32, c_float, s32,s32,s32,s32,c_float, s32,s32,s32,s32,s32,s32, c_bool]
+    tsapp_configure_canfd_regs.restype = TS_ReturnType
+    tsapp_configure_canfd_regs.errcheck = check_status_operation
+# UDS诊断
+# CAN
+# 创建诊断服务
+# only windows supported now
+    __tsdiag_can_create_mod = dll.tsdiag_can_create
+    __tsdiag_can_create_mod.argtypes = [pu8,s32,u8,u8,s32,c_bool,s32,c_bool,s32,c_bool]
+    __tsdiag_can_create_mod.restype = TS_ReturnType
+    __tsdiag_can_create_mod.errcheck = check_status_operation
+
+    __tsdiag_can_attach_to_tscan_tool = dll.tsdiag_can_attach_to_tscan_tool
+    __tsdiag_can_attach_to_tscan_tool.argtypes = [s32,size_t]
+    __tsdiag_can_attach_to_tscan_tool.restype = TS_ReturnType
+    __tsdiag_can_attach_to_tscan_tool.errcheck = check_status_operation
+
+    def tsdiag_can_create(HwHandle,pDiagModuleIndex: c_int32, AChnIndex: CHANNEL_INDEX, ASupportFDCAN: u8,AMaxDLC: u8,ARequestID: c_uint32, ARequestIDIsStd: bool, AResponseID: c_uint32, AResponseIDIsStd: bool,AFunctionID: c_uint32, AFunctionIDIsStd: bool):
+        """
+            udsHandle = c_int8(0)
+            ChnIndex = CHANNEL_INDEX.CHN1
+            ASupportFD  = c_byte(1)
+            AMaxdlc = c_byte(8)
+            reqID = c_int32(0x7e0)
+            ARequestIDIsStd = False
+            resID = c_int32(0x7e3)
+            resIsStd = False
+            AFctID = c_int32(0x7df)
+            fctIsStd = False
+            tsdiag_can_create(HWHandle,udsHandle,ChnIndex,ASupportFD,AMaxdlc,reqID,resIsStd,resID,resIsStd,AFctID,fctIsStd)
+            """
+        try:
+            dlc = DLC_DATA_BYTE_CNT.index(AMaxDLC)
+        except:
+            dlc = AMaxDLC
+        r = __tsdiag_can_create_mod(pDiagModuleIndex, AChnIndex, ASupportFDCAN, dlc, ARequestID,
+                                    ARequestIDIsStd,
+                                    AResponseID, AResponseIDIsStd, AFunctionID, AFunctionIDIsStd)
+        if r != 0:
+            return r
+        return __tsdiag_can_attach_to_tscan_tool(pDiagModuleIndex, HwHandle)
+
+
+    # 删除指定诊断服务
+    tsdiag_can_delete = dll.tsdiag_can_delete
+    tsdiag_can_delete.argtypes = [u8]
+    tsdiag_can_delete.restype = TS_ReturnType
+    tsdiag_can_delete.errcheck = check_status_operation
+
+    # 删除所有诊断服务
+    tsdiag_can_delete_all = dll.tsdiag_can_delete_all
+    tsdiag_can_delete_all.argtypes = []
+    tsdiag_can_delete_all.restype = TS_ReturnType
+    tsdiag_can_delete_all.errcheck = check_status_operation
+
+    # 功能寻址 请求
+    tstp_can_send_functional = dll.tstp_can_send_functional
+    tstp_can_send_functional.argtypes = [u8,pu8,s32]
+    tstp_can_send_functional.restype = TS_ReturnType
+    tstp_can_send_functional.errcheck = check_status_operation
+
+    # 请求id 发送数据
+    tstp_can_send_request = dll.tstp_can_send_request
+    tstp_can_send_request.argtypes = [u8,pu8,s32]
+    tstp_can_send_request.restype = TS_ReturnType
+    tstp_can_send_request.errcheck = check_status_operation
+
+    # 请求并接收数据
+    tstp_can_request_and_get_response = dll.tstp_can_request_and_get_response
+    tstp_can_send_request.argtypes = [u8,pu8,s32,pu8,ps32]
+    tstp_can_send_request.restype = TS_ReturnType
+    tstp_can_send_request.errcheck = check_status_operation
+
+    # 相关诊断服务
+    # 10 服务
+    tsdiag_can_session_control = dll.tsdiag_can_session_control
+    tsdiag_can_session_control.argtypes = [u8,u8]
+    tsdiag_can_session_control.restype = TS_ReturnType
+    tsdiag_can_session_control.errcheck = check_status_operation
+
+    # 31
+    tsdiag_can_routine_control = dll.tsdiag_can_routine_control
+    tsdiag_can_routine_control.argtypes = [u8,u8,u16]
+    tsdiag_can_routine_control.restype = TS_ReturnType
+    tsdiag_can_routine_control.errcheck = check_status_operation
+
+    # 28
+    tsdiag_can_communication_control = dll.tsdiag_can_communication_control
+    tsdiag_can_communication_control.argtypes = [u8,u8]
+    tsdiag_can_communication_control.restype = TS_ReturnType
+    tsdiag_can_communication_control.errcheck = check_status_operation
+
+    # 27 get seed
+    tsdiag_can_security_access_request_seed = dll.tsdiag_can_security_access_request_seed
+    tsdiag_can_security_access_request_seed.argtypes = [u8,s32,pu8,ps32]
+    tsdiag_can_security_access_request_seed.restype = TS_ReturnType
+    tsdiag_can_security_access_request_seed.errcheck = check_status_operation
+
+    # 27 send key
+    tsdiag_can_security_access_send_key = dll.tsdiag_can_security_access_send_key
+    tsdiag_can_security_access_send_key.argtypes = [u8,s32,pu8,ps32]
+    tsdiag_can_security_access_send_key.restype = TS_ReturnType
+    tsdiag_can_security_access_send_key.errcheck = check_status_operation
+
+    # 34
+    tsdiag_can_request_download = dll.tsdiag_can_request_download
+    tsdiag_can_request_download.argtypes = [u8,u32,u32]
+    tsdiag_can_request_download.restype = TS_ReturnType
+    tsdiag_can_request_download.errcheck = check_status_operation
+
+    # 35
+    tsdiag_can_request_upload = dll.tsdiag_can_request_upload
+    tsdiag_can_request_upload.argtypes = [u8,s32,s32]
+    tsdiag_can_request_upload.restype = TS_ReturnType
+    tsdiag_can_request_upload.errcheck = check_status_operation
+
+    # 36
+    tsdiag_can_transfer_data = dll.tsdiag_can_transfer_data
+    tsdiag_can_transfer_data.argtypes = [u8,pu8,s32,s32]
+    tsdiag_can_transfer_data.restype = TS_ReturnType
+    tsdiag_can_transfer_data.errcheck = check_status_operation
+
+    # 37
+    tsdiag_can_request_transfer_exit = dll.tsdiag_can_request_transfer_exit
+    tsdiag_can_request_transfer_exit.argtypes = [u8]
+    tsdiag_can_request_transfer_exit.restype = TS_ReturnType
+    tsdiag_can_request_transfer_exit.errcheck = check_status_operation
+
+    # 2E
+    tsdiag_can_write_data_by_identifier = dll.tsdiag_can_write_data_by_identifier
+    tsdiag_can_write_data_by_identifier.argtypes = [u8,u16,pu8,s32]
+    tsdiag_can_write_data_by_identifier.restype = TS_ReturnType
+    tsdiag_can_write_data_by_identifier.errcheck = check_status_operation
+
+    # 22
+    tsdiag_can_read_data_by_identifier = dll.tsdiag_can_read_data_by_identifier
+    tsdiag_can_read_data_by_identifier.argtypes = [u8,u16,pu8,ps32]
+    tsdiag_can_read_data_by_identifier.restype = TS_ReturnType
+    tsdiag_can_read_data_by_identifier.errcheck = check_status_operation
+
+    # LIN 诊断
+    # 诊断请求
+    tstp_lin_master_request = dll.tstp_lin_master_request
+    tstp_lin_master_request.argtypes = [s32,u8,pu8,s32,s32]
+    tstp_lin_master_request.restype = TS_ReturnType
+    tstp_lin_master_request.errcheck = check_status_operation
+    # 
+    tstp_lin_master_request_intervalms = dll.tstp_lin_master_request_intervalms
+    tstp_lin_master_request_intervalms.argtypes = [s32,u16]
+    tstp_lin_master_request_intervalms.restype = TS_ReturnType
+    tstp_lin_master_request_intervalms.errcheck = check_status_operation
+    # 重启
+    tstp_lin_reset = dll.tstp_lin_reset
+    tstp_lin_reset.argtypes = [s32]
+    tstp_lin_reset.restype = TS_ReturnType
+    tstp_lin_reset.errcheck = check_status_operation
+
+    # 从节点响应
+    tstp_lin_slave_response_intervalms = dll.tstp_lin_slave_response_intervalms
+    tstp_lin_slave_response_intervalms.argtypes = [s32,u16]
+    tstp_lin_slave_response_intervalms.restype = TS_ReturnType
+    tstp_lin_slave_response_intervalms.errcheck = check_status_operation
+
+    # 22
+    tsdiag_lin_read_data_by_identifier = dll.tsdiag_lin_read_data_by_identifier
+    tsdiag_lin_read_data_by_identifier.argtypes = [s32,u8,u16,pu8,pu8,ps32,s32]
+    tsdiag_lin_read_data_by_identifier.restype = TS_ReturnType
+    tsdiag_lin_read_data_by_identifier.errcheck = check_status_operation
+
+    # 2E
+    tsdiag_lin_write_data_by_identifier = dll.tsdiag_lin_write_data_by_identifier
+    tsdiag_lin_write_data_by_identifier.argtypes = [s32,u8,u16,pu8,s32,pu8,pu8,ps32,s32]
+    tsdiag_lin_write_data_by_identifier.restype = TS_ReturnType
+    tsdiag_lin_write_data_by_identifier.errcheck = check_status_operation
+
+    # 10
+    tsdiag_lin_session_control = dll.tsdiag_lin_session_control
+    tsdiag_lin_session_control.argtypes = [s32,u8,u8,s32]
+    tsdiag_lin_session_control.restype = TS_ReturnType
+    tsdiag_lin_session_control.errcheck = check_status_operation
+
+    # 
+    tsdiag_lin_fault_memory_clear = dll.tsdiag_lin_fault_memory_clear
+    tsdiag_lin_fault_memory_clear.argtypes = [s32,u8,u8,s32]
+    tsdiag_lin_fault_memory_clear.restype = TS_ReturnType
+    tsdiag_lin_fault_memory_clear.errcheck = check_status_operation
+
+    # 
+    tsdiag_lin_fault_memory_read = dll.tsdiag_lin_fault_memory_read
+    tsdiag_lin_fault_memory_read.argtypes = [s32,u8,u8,s32]
+    tsdiag_lin_fault_memory_read.restype = TS_ReturnType
+    tsdiag_lin_fault_memory_read.errcheck = check_status_operation
 
 
     
