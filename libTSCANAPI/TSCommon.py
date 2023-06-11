@@ -2,13 +2,13 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 11:59:15
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-10 22:32:02
+LastEditTime: 2023-06-11 15:24:16
 '''
 
 from .TSStructure import *  
 from .TSEnumdefine import * 
-from .TSDirver import _os,dll
-
+from .TSDirver import _os,dll,_curr_path
+from ctypes import *
 # Common Functions
 
 
@@ -66,6 +66,31 @@ tsapp_connect.errcheck = check_status_operation
 
 # only windows supported now
 if 'windows' in _os.lower():
+    # 增加CAN过滤报文
+    tsfifo_add_can_canfd_pass_filter = dll.tsfifo_add_can_canfd_pass_filter
+    tsfifo_add_can_canfd_pass_filter.argtypes = [size_t,s32,s32,c_bool]
+    tsfifo_add_can_canfd_pass_filter.restype = TS_ReturnType
+    tsfifo_add_can_canfd_pass_filter.errcheck = check_status_operation
+
+    # 删除CAN过滤报文
+    tsfifo_add_can_canfd_pass_filter = dll.tsfifo_add_can_canfd_pass_filter
+    tsfifo_add_can_canfd_pass_filter.argtypes = [size_t,s32,s32]
+    tsfifo_add_can_canfd_pass_filter.restype = TS_ReturnType
+    tsfifo_add_can_canfd_pass_filter.errcheck = check_status_operation
+
+    # 增加LIN过滤报文
+    tsfifo_add_can_canfd_pass_filter = dll.tsfifo_add_can_canfd_pass_filter
+    tsfifo_add_can_canfd_pass_filter.argtypes = [size_t,s32,s32]
+    tsfifo_add_can_canfd_pass_filter.restype = TS_ReturnType
+    tsfifo_add_can_canfd_pass_filter.errcheck = check_status_operation
+
+    # 删除LIN过滤报文
+    tsfifo_add_can_canfd_pass_filter = dll.tsfifo_add_can_canfd_pass_filter
+    tsfifo_add_can_canfd_pass_filter.argtypes = [size_t,s32,s32]
+    tsfifo_add_can_canfd_pass_filter.restype = TS_ReturnType
+    tsfifo_add_can_canfd_pass_filter.errcheck = check_status_operation
+
+
     # 设置当前硬件存在CAN的通道数量
     """
         Args:
@@ -216,8 +241,9 @@ if 'windows' in _os.lower():
         r = __tsdiag_can_create_mod(pDiagModuleIndex, AChnIndex, ASupportFDCAN, dlc, ARequestID,
                                     ARequestIDIsStd,
                                     AResponseID, AResponseIDIsStd, AFunctionID, AFunctionIDIsStd)
-        r = __tsdiag_can_attach_to_tscan_tool(pDiagModuleIndex, HwHandle)
-        return r
+        if r != 0:
+            return r
+        return __tsdiag_can_attach_to_tscan_tool(pDiagModuleIndex, HwHandle)
 
 
     # 删除指定诊断服务
@@ -371,6 +397,7 @@ if 'windows' in _os.lower():
     tsdiag_lin_fault_memory_read.errcheck = check_status_operation
 
 
+    
 
 
 
@@ -511,11 +538,10 @@ tscan_get_device_info.errcheck = check_status_operation
     example:
         tsapp_disconnect_by_handle(handle)
 """
-tscan_disconnect_by_handle = dll.tscan_disconnect_by_handle
-tscan_disconnect_by_handle.argtypes = [size_t]  
-tscan_disconnect_by_handle.restype = TS_ReturnType
-tscan_disconnect_by_handle.errcheck = check_status_operation
-tscan_disconnect_by_handle
+tsapp_disconnect_by_handle = dll.tscan_disconnect_by_handle
+tsapp_disconnect_by_handle.argtypes = [size_t]  
+tsapp_disconnect_by_handle.restype = TS_ReturnType
+tsapp_disconnect_by_handle.errcheck = check_status_operation
 
 # 断开所有设备连接
 """ tsapp_disconnect_all() """

@@ -1,11 +1,9 @@
 <!--
  * @Author: seven 865762826@qq.com
- * @Date: 2023-06-10 12:40:38
+ * @Date: 2023-06-11 14:07:18
  * @LastEditors: seven 865762826@qq.com
- * @LastEditTime: 2023-06-11 14:07:35
+ * @LastEditTime: 2023-06-11 15:48:44
 -->
-# libTSCANApi
-TSMaster API on 64 windows and linux
 
 如果需要本库能直接集成进入Python-can
 
