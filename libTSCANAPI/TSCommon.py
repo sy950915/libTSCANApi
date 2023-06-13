@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 11:59:15
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-11 18:47:18
+LastEditTime: 2023-06-13 18:47:00
 '''
 
 from .TSStructure import *  
@@ -532,7 +532,7 @@ tsfifo_receive_can_msgs.errcheck = check_status_operation
         tsfifo_clear_can_receive_buffers(handle,CHANNEL_INDEX.CHN1)
     """
 tsfifo_clear_can_receive_buffers = dll.tsfifo_clear_can_receive_buffers
-tsfifo_clear_can_receive_buffers.argtypes = [size_t]  
+tsfifo_clear_can_receive_buffers.argtypes = [size_t,s32]  
 tsfifo_clear_can_receive_buffers.restype = TS_ReturnType
 tsfifo_clear_can_receive_buffers.errcheck = check_status_operation
 
@@ -805,7 +805,7 @@ tsfifo_read_canfd_rx_buffer_frame_count.errcheck = check_status_operation
         tsfifo_clear_canfd_receive_buffers(handle,CHANNEL_INDEX.CHN1)
     """
 tsfifo_clear_canfd_receive_buffers = dll.tsfifo_clear_canfd_receive_buffers
-tsfifo_clear_canfd_receive_buffers.argtypes = [size_t,s32,ps32]  
+tsfifo_clear_canfd_receive_buffers.argtypes = [size_t,s32]  
 tsfifo_clear_canfd_receive_buffers.restype = TS_ReturnType
 tsfifo_clear_canfd_receive_buffers.errcheck = check_status_operation
 
