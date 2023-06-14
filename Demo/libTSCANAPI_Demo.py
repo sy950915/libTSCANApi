@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-14 17:27:16
+LastEditTime: 2023-06-14 20:21:51
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -10,6 +10,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from PyQt5.QtGui import QStandardItemModel
+from PyQt5.QtCore import Qt
 import sys
 from Ui_libTSCAN_PyDemo import Ui_MainWindow
 from libTSCANAPI import *
@@ -368,6 +370,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             self.btn_FifoClearCANMsg.clicked.connect(ClearCANMsg)
 
             self.CAN_Db = TSDB() 
+            
             # CAN DataBase 
             def click_find_file_path():
             # 设置文件扩展名过滤，同一个类型的不同格式如xlsx和xls 用空格隔开
@@ -380,6 +383,24 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                             self.statusBar.showMessage("load "+filename+ " successed")
                         else:
                             self.statusBar.showMessage(ret[1])
+                    elif filetype =="xml(*.xml)":
+                        self.FRDB = Fibex_parse(filename)
+                        model = QStandardItemModel(0, 2)
+                        model.setHeaderData(0, Qt.Horizontal, "Node")
+                        model.setHeaderData(1, Qt.Horizontal, "Comment")
+                        for i in self.FRDB.Ecus:
+                            parent = QStandardItem(f"{i}")
+                            parent.setCheckable(True)
+                            model.appendRow(parent)
+
+                            # Generate 7 child nodes for each top-level node
+                            for j in range(7):
+                                child = QStandardItem(f"Child Node {j}")
+                                child.setCheckable(True)
+                                parent.appendRow(child)
+                                
+                        self.treeView.setModel(model)
+                        
             self.btn_laodDBC.clicked.connect(click_find_file_path)
 
             # LIN API 
@@ -417,6 +438,9 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             def clearLINMsgs():
                 fifo_recv(MSGType.LINMSG,is_read=False)
             self.btn_FifoClearLINMsg.clicked.connect(clearLINMsgs)
+
+            # flexray API
+            self.btn_loadXml.clicked.connect(click_find_file_path)
 
     except:
         pass

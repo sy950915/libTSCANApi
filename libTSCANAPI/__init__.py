@@ -7,6 +7,7 @@ from .TSMasterDevice import *
 from .TSDB import *
 from .TSUDS import*
 from .config import *
+from .TSPrase_Fibex import *
 import atexit
 try :
     import can

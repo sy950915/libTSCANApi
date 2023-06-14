@@ -9,7 +9,8 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PyQt5.QtGui import QStandardItemModel, QStandardItem
+from PyQt5.QtCore import Qt
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -722,6 +723,12 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.tab, "")
         self.tab_6 = QtWidgets.QWidget()
         self.tab_6.setObjectName("tab_6")
+        self.treeView = QtWidgets.QTreeView(self.tab_6)
+        self.treeView.setGeometry(QtCore.QRect(530, 10, 256, 192))
+        self.treeView.setObjectName("treeView")
+        self.btn_loadXml = QtWidgets.QPushButton(self.tab_6)
+        self.btn_loadXml.setGeometry(QtCore.QRect(20, 20, 121, 23))
+        self.btn_loadXml.setObjectName("btn_loadXml")
         self.tabWidget.addTab(self.tab_6, "")
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
@@ -752,7 +759,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(3)
+        self.tabWidget.setCurrentIndex(4)
         self.cbb_BusMsgType.setCurrentIndex(0)
         self.cbb_rate.setCurrentIndex(2)
         self.cbb_data.setCurrentIndex(1)
@@ -981,8 +988,25 @@ class Ui_MainWindow(object):
         self.label_49.setText(_translate("MainWindow", "清除LIN读取Buffer中的数据"))
         self.btn_FifoClearLINMsg.setText(_translate("MainWindow", "Clear LIN Tx/Rx Messages"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "LIN API"))
+        self.btn_loadXml.setText(_translate("MainWindow", "加载FlexRay数据库"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_6), _translate("MainWindow", "FlexRay API"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "CAN UDS API"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _translate("MainWindow", "LIN UDS API"))
         self.menu.setTitle(_translate("MainWindow", "清除报文信息"))
         self.actionClear.setText(_translate("MainWindow", "Clear"))
+        
+        model = QStandardItemModel(0, 2)
+        model.setHeaderData(0, Qt.Horizontal, "Node")
+        model.setHeaderData(1, Qt.Horizontal, "Comment")
+
+        for i in range(5):
+            parent = QStandardItem("ECU")
+            parent.setCheckable(True)
+            for j in range(2):
+                child_node = QStandardItem("node")
+                child_node.setCheckable(True)
+                parent.setChild(0, 0, child_node)
+                parent.setChild(0, 1, QStandardItem("Comment"))
+            model.appendRow(parent)
+                
+        self.treeView.setModel(model)
