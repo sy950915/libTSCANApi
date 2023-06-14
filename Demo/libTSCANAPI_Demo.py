@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-14 20:21:51
+LastEditTime: 2023-06-14 22:48:36
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -15,6 +15,7 @@ from PyQt5.QtCore import Qt
 import sys
 from Ui_libTSCAN_PyDemo import Ui_MainWindow
 from libTSCANAPI import *
+
 
 
 
@@ -38,6 +39,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
         Is_Connect = False
         Is_enable_bus = False
         __ShowMsgCount = 100
+        CurrentPath = os.path.dirname(__file__)
         def __init__(self):
             super(MyWindows, self).__init__()
             self.setupUi(self)
@@ -388,11 +390,28 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                         model = QStandardItemModel(0, 2)
                         model.setHeaderData(0, Qt.Horizontal, "Node")
                         model.setHeaderData(1, Qt.Horizontal, "Comment")
+                        # model = QStandardItemModel(0, 2)
+                        # model.setHeaderData(0, Qt.Horizontal, "Node")
+                        # model.setHeaderData(1, Qt.Horizontal, "Comment")
+
+                        # for i in range(5):
+                        #     parent = QStandardItem("ECU")
+                        #     parent.setCheckable(True)
+                        #     for j in range(2):
+                        #         child_node = QStandardItem("node")
+                        #         child_node.setCheckable(True)
+                        #         parent.setChild(0, 0, child_node)
+                        #         parent.setChild(0, 1, QStandardItem("Comment"))
+                        #     model.appendRow(parent)
+                                
+                        # self.treeView.setModel(model)
                         for i in self.FRDB.Ecus:
-                            parent = QStandardItem(f"{i}")
+                            if self.FRDB.Ecus[i]['startupFrame_ID'] != 0:
+                                parent = QStandardItem(QIcon(self.CurrentPath+"/../icon/318.svg"),f"{i}")
+                            else:
+                                parent = QStandardItem(QIcon(self.CurrentPath+"/../icon/077.svg"),f"{i}")
                             parent.setCheckable(True)
                             model.appendRow(parent)
-
                             # Generate 7 child nodes for each top-level node
                             for j in range(7):
                                 child = QStandardItem(f"Child Node {j}")

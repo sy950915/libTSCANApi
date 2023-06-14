@@ -995,18 +995,18 @@ class Ui_MainWindow(object):
         self.menu.setTitle(_translate("MainWindow", "清除报文信息"))
         self.actionClear.setText(_translate("MainWindow", "Clear"))
         
-        model = QStandardItemModel(0, 2)
-        model.setHeaderData(0, Qt.Horizontal, "Node")
-        model.setHeaderData(1, Qt.Horizontal, "Comment")
+        # model = QStandardItemModel(0, 2)
+        # model.setHeaderData(0, Qt.Horizontal, "Node")
+        # model.setHeaderData(1, Qt.Horizontal, "Comment")
 
-        for i in range(5):
-            parent = QStandardItem("ECU")
-            parent.setCheckable(True)
-            for j in range(2):
-                child_node = QStandardItem("node")
-                child_node.setCheckable(True)
-                parent.setChild(0, 0, child_node)
-                parent.setChild(0, 1, QStandardItem("Comment"))
-            model.appendRow(parent)
+        # for i in range(5):
+        #     parent = QStandardItem(0,0,"ECU")
+        #     parent.setCheckable(True)
+        #     for j in range(2):
+        #         child_node = QStandardItem("node")
+        #         child_node.setCheckable(True)
+        #         parent.setChild(0, 0, child_node)
+        #         parent.setChild(0, 1, QStandardItem("Comment"))
+        #     model.appendRow(parent)
                 
-        self.treeView.setModel(model)
+        # self.treeView.setModel(model)

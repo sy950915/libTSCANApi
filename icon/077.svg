@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+	<path d="M4.34001 1.89L1.89001 4.34V14.14H11.69L14.14 11.69V1.89H4.34001Z" fill="#106EBE"/>
+	<g opacity="0.2">
+		<path d="M11.69 4.34H1.89001L4.34001 1.89H14.14L11.69 4.34Z" fill="white"/>
+	</g>
+	<g opacity="0.2">
+		<path d="M14.14 11.69L11.69 14.14V4.34L14.14 1.89V11.69Z" fill="#FF0B0B"/>
+	</g>
+</svg>
