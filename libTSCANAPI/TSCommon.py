@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 11:59:15
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-13 18:47:00
+LastEditTime: 2023-06-14 16:48:53
 '''
 
 from .TSStructure import *  
@@ -215,7 +215,7 @@ tsapp_configure_baudrate_canfd.errcheck = check_status_operation
     Returns:
         error code
     example:
-        tsapp_configure_baudrate_lin(handle,0,c_double(19.2))
+        tsapp_configure_baudrate_lin(handle,0,c_double(19.2),0)
 """
 tsapp_configure_baudrate_lin = dll.tslin_config_baudrate
 tsapp_configure_baudrate_lin.argtypes = [size_t,s32, double, s32]
@@ -428,7 +428,7 @@ tsapp_delete_cyclic_msg_can.errcheck = check_status_operation
     Returns:
         error code
     """
-tsapp_transmit_canfd_async = dll.tscan_transmit_can_async
+tsapp_transmit_canfd_async = dll.tscan_transmit_canfd_async
 tsapp_transmit_canfd_async.argtypes = [size_t,PCANFD]  
 tsapp_transmit_canfd_async.restype = TS_ReturnType
 tsapp_transmit_canfd_async.errcheck = check_status_operation
@@ -659,7 +659,7 @@ tsapp_unregister_pretx_event_can.errcheck = check_status_operation
     
     Args:
         AHandle (c_size_t): tsapp_connect retrun handle
-        ACallback (OnTx_RxFUNC_CANFD): function
+        ACallback (OnTx_RxFUNC_CAN): function
 
     Returns:
         error code
@@ -667,10 +667,10 @@ tsapp_unregister_pretx_event_can.errcheck = check_status_operation
         def on_can(ACAN):
             print(ACAN.contents.FData[0])
             
-        on_can_event = OnTx_RxFUNC_CANFD(on_can)
+        on_can_event = OnTx_RxFUNC_CAN(on_can)
         tsapp_register_event_canfd(Handle,on_can_event)
     """
-tsapp_register_event_can = dll.tscan_register_event_canfd
+tsapp_register_event_can = dll.tscan_register_event_can
 tsapp_register_event_can.argtypes = [size_t,OnTx_RxFUNC_CAN]  
 tsapp_register_event_can.restype = TS_ReturnType
 tsapp_register_event_can.errcheck = check_status_operation
@@ -681,7 +681,7 @@ tsapp_register_event_can.errcheck = check_status_operation
     
     Args:
         AHandle (c_size_t): tsapp_connect retrun handle
-        ACallback (OnTx_RxFUNC_CANFD): function
+        ACallback (OnTx_RxFUNC_CAN): function
 
     Returns:
         error code
@@ -689,10 +689,10 @@ tsapp_register_event_can.errcheck = check_status_operation
         def on_can(ACAN):
             print(ACAN.contents.FData[0])
             
-        on_can_event = OnTx_RxFUNC_CANFD(on_can)
+        on_can_event = OnTx_RxFUNC_CAN(on_can)
         tsapp_unregister_event_canfd(Handle,on_can_event)
 """
-tsapp_unregister_event_can = dll.tscan_unregister_event_canfd
+tsapp_unregister_event_can = dll.tscan_unregister_event_can
 tsapp_unregister_event_can.argtypes = [size_t,OnTx_RxFUNC_CAN]  
 tsapp_unregister_event_can.restype = TS_ReturnType
 tsapp_unregister_event_can.errcheck = check_status_operation

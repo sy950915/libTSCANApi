@@ -78,8 +78,6 @@ def msg_convert_tosun(msg):
         raise (f'Unknown message type: {type(msg)}')
 
 class TSDB():
-    dbc_list_by_name = {}
-    dbc_signal_list = {}
     filenames = []
     dbc_list_by_id = {}
 
@@ -95,19 +93,18 @@ class TSDB():
                 self.filenames.append(filename)
             else:
                 print(filename, " already exists")
-                return
+                return -1,filename + " already exists"
             try:
                 db = cantools.db.load_file(dbcfile)
                 for msg in db.messages:
-                    if (msg.name not in self.dbc_list_by_name) and (msg.frame_id not in self.dbc_list_by_id):
-                        self.dbc_list_by_name[msg.name] = msg
+                    if  msg.frame_id not in self.dbc_list_by_id:
                         self.dbc_list_by_id[msg.frame_id] = msg
-                        self.dbc_signal_list[msg.name] = msg.signals
                     else:
                         print(msg.name, ' already exists')
+                return 0,"load successed"
 
             except Exception as e:
-                print(e)
+                return -2,e
 
     def __change_signal_value(self, msg, signal_dict: dict):
         try:
@@ -128,6 +125,7 @@ class TSDB():
     def set_signal_value(self, msg:TLIBCAN or TLIBCANFD or Message, signal_dict: dict):
         msg = tosun_convert_msg(msg)
         if msg.arbitration_id in self.dbc_list_by_id:
+            msg.dlc = self.dbc_list_by_id[msg.arbitration_id].length
             return msg_convert_tosun(self.__change_signal_value(msg, signal_dict))
 
     def get_signal_value(self, msg, signalname):
