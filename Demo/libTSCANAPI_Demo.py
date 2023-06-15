@@ -495,9 +495,10 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             self.FRMSG = [[],[]]
 
             def on_treeview_clicked(index,idx):
-                item = self.tv_xmlCHN1.model().itemFromIndex(index)
+                item = self.tv_xmlList[idx].itemFromIndex(index)
                 row = index.row() if index.isValid() else -1
                 depth = 0
+                
                 parent = item.parent()
                 while parent is not None:
                     depth += 1
@@ -586,10 +587,10 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                             fr_trigger = (TLibTrigger_def * fr_trigger_len)()
                             FrameLengthArray = (c_int * fr_trigger_len)()
                             for idx in range(fr_trigger_len):
-                                FrameLengthArray[idx] = self.FRMSG[idx]['FDLC']
+                                FrameLengthArray[idx] = self.FRMSG[i][idx]['FDLC']
                                 fr_trigger[idx].frame_idx=i
-                                fr_trigger[idx].slot_id = self.FRMSG[idx]['SLOT-ID']
-                                fr_trigger[idx].cycle_code = self.FRMSG[idx]['BASE-CYCLE']+self.FRMSG[idx]['CYCLE-REPETITION']
+                                fr_trigger[idx].slot_id = self.FRMSG[i][idx]['SLOT-ID']
+                                fr_trigger[idx].cycle_code = self.FRMSG[i][idx]['BASE-CYCLE']+self.FRMSG[i][idx]['CYCLE-REPETITION']
                                 if idx == 0:
                                     fr_trigger[idx].config_byte = 0X31
                                 elif fr_trigger[idx].slot_id>self.FR_Db[i].STATIC_SLOT:
