@@ -2,11 +2,12 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-15 17:29:38
+LastEditTime: 2023-06-15 21:13:46
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
 from functools import partial
+from operator import itemgetter
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
@@ -422,7 +423,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                         if  BindChn < 2:
                             FRDB = Fibex_parse(filename)
                             self.FR_Db[BindChn] = FRDB
-                            Cluster = QStandardItem(QIcon(self.CurrentPath+"/../icon/318.svg"),FRDB.Cluster['Name'])
+                            Cluster = QStandardItem(QIcon(self.CurrentPath+"/../icon/079.svg"),FRDB.Cluster['Name'])
                             self.tv_xmlList[BindChn].appendRow(Cluster)
                             for i in FRDB.Ecus:
                                 if FRDB.Ecus[i]['startupFrame_ID'] != 0:
@@ -433,9 +434,9 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                                 Cluster.appendRow(ECU)   
                                 for Msgdir in range(2):
                                     dir = QStandardItem(QIcon(self.CurrentPath+"/../icon/092.svg"),'Tx') if Msgdir==0 else QStandardItem(QIcon(self.CurrentPath+"/../icon/295.svg"),'Rx')
-                                    dir.setCheckable(True)
                                     ECU.appendRow(dir)
                                     if Msgdir==0:
+                                        dir.setCheckable(True)
                                         for (idx, Msg) in enumerate(FRDB.Ecus[i]['TX_Frame']):
                                             if Msg['SLOT-ID'] == FRDB.Ecus[i]['startupFrame_ID']:
                                                 child_node= QStandardItem(QIcon(self.CurrentPath+"/../icon/058.svg"),Msg['Name'])
@@ -447,7 +448,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                                     else:
                                         for idx, Msg in enumerate(FRDB.Ecus[i]['RX_Frame']):
                                             child_node= QStandardItem(QIcon(self.CurrentPath+"/../icon/295.svg"),Msg['Name'])
-                                            child_node.setCheckable(True)
+                                            # child_node.setCheckable(True)
                                             dir.setChild(idx, 0, child_node)
                                             dir.setChild(idx, 1, QStandardItem(str(Msg['SLOT-ID'])+" "+str(Msg['BASE-CYCLE'])+" "+str(Msg['CYCLE-REPETITION'])))
             self.btn_laodDBC.clicked.connect(click_find_file_path)
@@ -489,10 +490,11 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             self.btn_FifoClearLINMsg.clicked.connect(clearLINMsgs)
 
             # flexray API
-            self.ECU_Msgs = [{},{}]
+            self.ECU_Msgs = [None,None]
+            self.ECUName = ['','']
             self.FRMSG = [[],[]]
 
-            def on_treeview_clicked(index):
+            def on_treeview_clicked(index,idx):
                 item = self.tv_xmlCHN1.model().itemFromIndex(index)
                 row = index.row() if index.isValid() else -1
                 depth = 0
@@ -505,26 +507,39 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                         for i in range(item.parent().rowCount()):
                             if item.parent().child(i)!=item:
                                 item.parent().child(i).setCheckState(Qt.Unchecked)
-                        print(item.text() + ' is checked')
+                        self.ECU_Msgs[idx] = {}        
+                        self.ECU_Msgs[idx][item.text()] = self.FR_Db[idx].Ecus[item.text()]  
+                        self.ECUName[idx] = item.text()      
                     else:
-                        print(item.text() + ' is unchecked')
+                        if item.text() in self.ECU_Msgs[idx]:
+                            self.ECU_Msgs[idx] = None
+                            self.ECUName[idx] = '' 
                 elif depth == 2:
                     if item.checkState() == Qt.Checked:
                         for i in range(item.rowCount()):
-                                item.child(i).setCheckState(Qt.Checked)
+                            item.child(i).setCheckState(Qt.Checked)
                     else:
                         for i in range(item.rowCount()):
-                                item.child(i).setCheckState(Qt.Unchecked)
+                            item.child(i).setCheckState(Qt.Unchecked)
                 elif depth == 3:
+                    Frame = self.FR_Db[idx].Ecus[item.parent().parent().text()]['TX_Frame'][row]
                     if item.checkState() == Qt.Checked:
-                        print(item.text() + ' is checked')
+                        self.FRMSG[idx].append(Frame)
+                        # print(item.text() + ' is checked')
                     else:
-                        print(item.text() + ' is unchecked')
+                        if self.FRMSG[idx].count(Frame) !=0:
+                            self.FRMSG[idx].remove(Frame)
+
 
             self.btn_LoadChn1.clicked.connect(partial(click_find_file_path, 1,0))
             self.btn_LoadChn2.clicked.connect(partial(click_find_file_path, 1,1))
-            self.tv_xmlCHN1.clicked.connect(on_treeview_clicked)
 
+            def OnTreeView1Click(index):
+                on_treeview_clicked(index,0)
+            def OnTreeView2Click(index):
+                on_treeview_clicked(index,1)
+            self.tv_xmlCHN1.clicked.connect(OnTreeView1Click)
+            self.tv_xmlCHN2.clicked.connect(OnTreeView2Click)
             # 异步发送
             def Async_sendFlexrayMsg():
                 __SendMsg(__CreateMsg(is_flexray=True))
@@ -560,6 +575,19 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                 fifo_recv(MSGType.FlexrayMSG,is_read=False)
             self.btn_FifoClearflexrayMsg.clicked.connect(clearFlexrayMsgs)
 
+            def start_flexray_net():
+                for i in range(2):
+                    FlexrayConfig1 = TLibFlexray_controller_config().set_controller_config(self.ECU_Msgs[i][self.ECUName[i]],is_open_a=True, is_open_b=True, enable100_b=True, is_show_nullframe=False,is_Bridging=True)
+                    # list.sort(key=function, reverse=boolean)
+                    fr_trigger_len = len(self.FRMSG[i])
+                    if fr_trigger_len!=0:
+                        sorted(self.FRMSG[i],key = itemgetter('SLOT-ID'),reverse = True)
+                        fr_trigger = (TLibTrigger_def * fr_trigger_len)()
+                        FrameLengthArray = (c_int * fr_trigger_len)()
+            self.btn_flexrayStartNet.clicked.connect(start_flexray_net)
+
+            def stop_flexray_net():
+                pass
 
     except:
         pass

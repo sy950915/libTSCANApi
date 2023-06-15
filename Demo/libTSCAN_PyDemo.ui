@@ -1823,14 +1823,14 @@
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_47">
                  <item>
-                  <widget class="QPushButton" name="pushButton">
+                  <widget class="QPushButton" name="btn_flexrayStartNet">
                    <property name="text">
                     <string>启动FlexRay</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="pushButton_2">
+                  <widget class="QPushButton" name="btn_flexrayStopNet">
                    <property name="text">
                     <string>停止FlexRay</string>
                    </property>
