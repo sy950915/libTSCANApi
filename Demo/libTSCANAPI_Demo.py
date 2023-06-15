@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-15 21:13:46
+LastEditTime: 2023-06-15 21:25:05
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -577,13 +577,14 @@ class MyWindows(QMainWindow, Ui_MainWindow):
 
             def start_flexray_net():
                 for i in range(2):
-                    FlexrayConfig1 = TLibFlexray_controller_config().set_controller_config(self.ECU_Msgs[i][self.ECUName[i]],is_open_a=True, is_open_b=True, enable100_b=True, is_show_nullframe=False,is_Bridging=True)
+                    if self.ECU_Msgs[i] !=None:
+                        FlexrayConfig1 = TLibFlexray_controller_config().set_controller_config(self.ECU_Msgs[i][self.ECUName[i]],is_open_a=True, is_open_b=True, enable100_b=True, is_show_nullframe=False,is_Bridging=True)
                     # list.sort(key=function, reverse=boolean)
-                    fr_trigger_len = len(self.FRMSG[i])
-                    if fr_trigger_len!=0:
-                        sorted(self.FRMSG[i],key = itemgetter('SLOT-ID'),reverse = True)
-                        fr_trigger = (TLibTrigger_def * fr_trigger_len)()
-                        FrameLengthArray = (c_int * fr_trigger_len)()
+                        fr_trigger_len = len(self.FRMSG[i])
+                        if fr_trigger_len!=0:
+                            self.FRMSG[i].sort(key=lambda k: (k.get('SLOT-ID', 0)))
+                            fr_trigger = (TLibTrigger_def * fr_trigger_len)()
+                            FrameLengthArray = (c_int * fr_trigger_len)()
             self.btn_flexrayStartNet.clicked.connect(start_flexray_net)
 
             def stop_flexray_net():
