@@ -1,14 +1,14 @@
 import xml.etree.ElementTree as ET
 class Fibex_parse():
-    Cluster = {}
-    Frames = {}
-    Pdus = {}
-    Triggers = {}
-    Signals = {}
-    Codings = {}
-    Ecus = {}
-    STATIC_SLOT = 30
     def __init__(self,xmlpath) -> ET:
+        self.Cluster = {}
+        self.Frames = {}
+        self.Pdus = {}
+        self.Triggers = {}
+        self.Signals = {}
+        self.Codings = {}
+        self.Ecus = {}
+        self.STATIC_SLOT = 30
         self.tree = ET.parse(xmlpath)
         self.parse(self.tree)
     def parse(self,tree):
@@ -33,6 +33,7 @@ class Fibex_parse():
             CLUSTER = ELEMENTS.find('{http://www.asam.net/xml/fbx}CLUSTERS/{http://www.asam.net/xml/fbx}CLUSTER')
             if CLUSTER != None:
                 self.STATIC_SLOT = int(CLUSTER.find('{http://www.asam.net/xml/fbx/flexray}STATIC-SLOT').text)
+                self.Cluster['Name'] = CLUSTER.find('{http://www.asam.net/xml}SHORT-NAME').text
                 self.Cluster['NETWORK_MANAGEMENT_VECTOR_LENGTH'] = int(CLUSTER.find('{http://www.asam.net/xml/fbx/flexray}NETWORK-MANAGEMENT-VECTOR-LENGTH').text)
                 self.Cluster['PAYLOAD_LENGTH_STATIC'] = int(CLUSTER.find('{http://www.asam.net/xml/fbx/flexray}PAYLOAD-LENGTH-STATIC').text)
                 self.Cluster['T_S_S_TRANSMITTER'] = int(CLUSTER.find('{http://www.asam.net/xml/fbx/flexray}T-S-S-TRANSMITTER').text)

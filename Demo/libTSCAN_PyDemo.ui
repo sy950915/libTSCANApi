@@ -1761,29 +1761,322 @@
           <attribute name="title">
            <string>FlexRay API</string>
           </attribute>
-          <widget class="QTreeView" name="treeView">
-           <property name="geometry">
-            <rect>
-             <x>530</x>
-             <y>10</y>
-             <width>256</width>
-             <height>192</height>
-            </rect>
-           </property>
-          </widget>
-          <widget class="QPushButton" name="btn_loadXml">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>20</y>
-             <width>121</width>
-             <height>23</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>加载FlexRay数据库</string>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="horizontalLayout_101">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_100">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_37">
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_16">
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_33">
+                   <item>
+                    <widget class="QLabel" name="label_35">
+                     <property name="text">
+                      <string>CHN1</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_LoadChn1">
+                     <property name="text">
+                      <string>通道1 加载数据库</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <widget class="QTreeView" name="tv_xmlCHN1"/>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_17">
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_35">
+                   <item>
+                    <widget class="QLabel" name="label_36">
+                     <property name="text">
+                      <string>CHN2</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_LoadChn2">
+                     <property name="text">
+                      <string>通道2 加载数据库</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <widget class="QTreeView" name="tv_xmlCHN2"/>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_33">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_47">
+                 <item>
+                  <widget class="QPushButton" name="pushButton">
+                   <property name="text">
+                    <string>启动FlexRay</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButton_2">
+                   <property name="text">
+                    <string>停止FlexRay</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="cb_FlexRayMsgShow">
+                   <property name="text">
+                    <string>启动报文检测</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_97">
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_96">
+                   <item>
+                    <widget class="QLabel" name="label_99">
+                     <property name="maximumSize">
+                      <size>
+                       <width>80</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>异步发送报文</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_asyncSendflexrayMsg">
+                     <property name="text">
+                      <string>Async_send_Msg</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_95">
+                   <item>
+                    <widget class="QLabel" name="label_100">
+                     <property name="maximumSize">
+                      <size>
+                       <width>80</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>同步发送报文</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_SyncSendflexrayMsg">
+                     <property name="text">
+                      <string>sync_send_Msg</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_99">
+                 <item>
+                  <widget class="QLabel" name="label_104">
+                   <property name="text">
+                    <string>通道</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QComboBox" name="cbb_FlexraychannelList">
+                   <item>
+                    <property name="text">
+                     <string>1</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>2</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_101">
+                   <property name="text">
+                    <string>报文ID</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="tb_FlexRayId">
+                   <property name="maximumSize">
+                    <size>
+                     <width>50</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>1</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_102">
+                   <property name="text">
+                    <string>cyclic</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="tb_FlexRayCyclic">
+                   <property name="maximumSize">
+                    <size>
+                     <width>50</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>32</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_103">
+                   <property name="text">
+                    <string>报文数据</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="tb_FlexrayMsgData"/>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_98">
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_43">
+                   <item>
+                    <widget class="QLabel" name="label_52">
+                     <property name="text">
+                      <string>注册Flexray 回调函数</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_regflexrayCallBack">
+                     <property name="text">
+                      <string>注册Flexray 回调函数</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_42">
+                   <item>
+                    <widget class="QLabel" name="label_47">
+                     <property name="text">
+                      <string>注销Flexray 回调函数</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_unregflexrayCallBack">
+                     <property name="text">
+                      <string>注销Flexray 回调函数</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_44">
+                 <item>
+                  <widget class="QLabel" name="label_48">
+                   <property name="text">
+                    <string>读取Flexray Rx数据到Buffer中</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btn_FifoRecvflexrayRxMsg">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
+                   <property name="text">
+                    <string>Receive flexray Rx Messages</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_45">
+                 <item>
+                  <widget class="QLabel" name="label_51">
+                   <property name="text">
+                    <string>读取flexray Tx/Rx数据到Buffer中</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btn_FifoRecvflexrayMsg">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
+                   <property name="text">
+                    <string>Receive flexray Tx/Rx Messages</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_46">
+                 <item>
+                  <widget class="QLabel" name="label_50">
+                   <property name="text">
+                    <string>清除flexray读取Buffer中的数据</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btn_FifoClearflexrayMsg">
+                   <property name="text">
+                    <string>Clear flexray Tx/Rx Messages</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </widget>
          <widget class="QWidget" name="tab_2">
           <attribute name="title">
@@ -1845,12 +2138,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>677</x>
-     <y>193</y>
+     <x>689</x>
+     <y>222</y>
     </hint>
     <hint type="destinationlabel">
-     <x>654</x>
-     <y>220</y>
+     <x>733</x>
+     <y>256</y>
     </hint>
    </hints>
   </connection>
@@ -1861,12 +2154,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>603</x>
-     <y>193</y>
+     <x>630</x>
+     <y>222</y>
     </hint>
     <hint type="destinationlabel">
-     <x>685</x>
-     <y>220</y>
+     <x>733</x>
+     <y>256</y>
     </hint>
    </hints>
   </connection>
@@ -1877,12 +2170,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>331</x>
-     <y>128</y>
+     <x>410</x>
+     <y>159</y>
     </hint>
     <hint type="destinationlabel">
-     <x>364</x>
-     <y>310</y>
+     <x>410</x>
+     <y>352</y>
     </hint>
    </hints>
   </connection>
@@ -1893,12 +2186,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>335</x>
-     <y>132</y>
+     <x>410</x>
+     <y>159</y>
     </hint>
     <hint type="destinationlabel">
-     <x>320</x>
-     <y>361</y>
+     <x>410</x>
+     <y>383</y>
     </hint>
    </hints>
   </connection>
@@ -1909,12 +2202,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>347</x>
-     <y>128</y>
+     <x>410</x>
+     <y>159</y>
     </hint>
     <hint type="destinationlabel">
-     <x>863</x>
-     <y>314</y>
+     <x>945</x>
+     <y>352</y>
     </hint>
    </hints>
   </connection>
@@ -1925,12 +2218,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>402</x>
-     <y>127</y>
+     <x>410</x>
+     <y>159</y>
     </hint>
     <hint type="destinationlabel">
-     <x>862</x>
-     <y>358</y>
+     <x>945</x>
+     <y>383</y>
     </hint>
    </hints>
   </connection>
@@ -1941,12 +2234,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>579</x>
-     <y>132</y>
+     <x>677</x>
+     <y>159</y>
     </hint>
     <hint type="destinationlabel">
-     <x>306</x>
-     <y>330</y>
+     <x>410</x>
+     <y>352</y>
     </hint>
    </hints>
   </connection>
@@ -1957,12 +2250,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>671</x>
-     <y>128</y>
+     <x>677</x>
+     <y>159</y>
     </hint>
     <hint type="destinationlabel">
-     <x>852</x>
-     <y>319</y>
+     <x>945</x>
+     <y>352</y>
     </hint>
    </hints>
   </connection>
@@ -1973,12 +2266,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>692</x>
-     <y>134</y>
+     <x>677</x>
+     <y>159</y>
     </hint>
     <hint type="destinationlabel">
-     <x>339</x>
-     <y>357</y>
+     <x>410</x>
+     <y>383</y>
     </hint>
    </hints>
   </connection>
@@ -1989,12 +2282,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>725</x>
-     <y>135</y>
+     <x>677</x>
+     <y>159</y>
     </hint>
     <hint type="destinationlabel">
-     <x>854</x>
-     <y>354</y>
+     <x>945</x>
+     <y>383</y>
     </hint>
    </hints>
   </connection>
@@ -2005,12 +2298,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>686</x>
-     <y>134</y>
+     <x>677</x>
+     <y>159</y>
     </hint>
     <hint type="destinationlabel">
-     <x>350</x>
-     <y>381</y>
+     <x>410</x>
+     <y>414</y>
     </hint>
    </hints>
   </connection>
@@ -2021,12 +2314,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>757</x>
-     <y>137</y>
+     <x>677</x>
+     <y>159</y>
     </hint>
     <hint type="destinationlabel">
-     <x>855</x>
-     <y>383</y>
+     <x>945</x>
+     <y>414</y>
     </hint>
    </hints>
   </connection>
@@ -2037,12 +2330,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>705</x>
-     <y>133</y>
+     <x>677</x>
+     <y>159</y>
     </hint>
     <hint type="destinationlabel">
-     <x>555</x>
-     <y>414</y>
+     <x>410</x>
+     <y>445</y>
     </hint>
    </hints>
   </connection>
@@ -2053,12 +2346,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>694</x>
-     <y>133</y>
+     <x>677</x>
+     <y>159</y>
     </hint>
     <hint type="destinationlabel">
-     <x>856</x>
-     <y>422</y>
+     <x>945</x>
+     <y>445</y>
     </hint>
    </hints>
   </connection>

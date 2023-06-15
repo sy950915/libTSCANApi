@@ -2,10 +2,11 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-14 22:48:36
+LastEditTime: 2023-06-15 17:29:38
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
+from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
@@ -83,6 +84,20 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             self.model.setHorizontalHeaderLabels(['times', 'CHN','ID', 'Type','Dir','DLC','Data'])
             self.tv_MsgData.setModel(self.model)
             
+            self.treemodel = QStandardItemModel(0, 2)
+            self.treemodel.setHeaderData(0, Qt.Horizontal, "Node")
+            self.treemodel.setHeaderData(1, Qt.Horizontal, "Comment")
+            self.tv_xmlCHN1.setModel(self.treemodel)
+            self.tv_xmlCHN1.setEditTriggers(QAbstractItemView.NoEditTriggers)
+            self.treemode2 = QStandardItemModel(0, 2)
+            self.treemode2.setHeaderData(0, Qt.Horizontal, "Node")
+            self.treemode2.setHeaderData(1, Qt.Horizontal, "Comment")
+            self.tv_xmlCHN2.setModel(self.treemode2)
+            self.tv_xmlCHN2.setEditTriggers(QAbstractItemView.NoEditTriggers)
+
+            self.tv_xmlList = [self.treemodel,self.treemode2]
+
+
             # self.tv_MsgData.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)  # 所有列自动拉伸，充满界面
             
             self.tv_MsgData.setColumnWidth(0,120)
@@ -196,7 +211,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                     tsapp_configure_baudrate_canfd(self.HwHandle,self.cbb_channelList.currentIndex(),int(self.cbb_rate.currentText()),int(self.cbb_data.currentText()),TLIBCANFDControllerType.lfdtISOCAN,TLIBCANFDControllerMode.lfdmNormal,self.cb_enableBtv.isChecked())
             self.btn_downloadCAN.clicked.connect(set_config)  # Select the type of the can. 选择can的类型   2 描述
             
-            def __CreateMsg(is_lin =False):
+            def __CreateMsg(is_lin =False,is_flexray =False):
                 FPro = 1
                 
                 FId = 0x12
@@ -207,6 +222,16 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                     data = str2List(self.tb_LINMsgData.text())
                     FPro = 1 if self.rb_LINSend.isChecked() else 0 
                     Msg = TLIBLIN(FIdxChn=self.cbb_LINchannelList.currentIndex(),FIdentifier=FId,FProperties=FPro,FData=data)
+                    return Msg
+                elif is_flexray:
+                    str_id = self.tb_linId.text().strip().replace("0x",'')
+                    if str_id.isdigit():
+                        FId = int(str_id,10)
+                    str_cyclic = self.tb_linId.text().strip().replace("0x",'')
+                    if str_cyclic.isdigit():
+                        Fcyclic = int(str_id,10)
+                    data = str2List(self.tb_LINMsgData.text())
+                    Msg = TLIBFlexray(FIdxChn=self.cbb_FlexraychannelList.currentIndex(),FSlotId =FId,FCycleNumber=Fcyclic,FData=data)
                     return Msg
                 else:
                     str_id= self.tb_canId.text().strip().replace("0x",'')
@@ -275,9 +300,11 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                 __SendMsg(__CreateMsg(),is_send=False)
             self.btn_stopCyclicMsg.clicked.connect(CyclicStopSendMsg)
             
-            def __is_start_viewMsg(viewType:ViewType = ViewType.CallBackType,is_lin=False):
+            def __is_start_viewMsg(viewType:ViewType = ViewType.CallBackType,is_lin=False,is_flexray =False):
                 if is_lin:
                     return self.cb_LINMsgShow.isChecked()
+                if is_flexray:
+                    return self.cb_FlexRayMsgShow.isChecked()
                 if not self.cb_MsgShow.isChecked():
                     return False
                 if viewType == ViewType.CallBackType:
@@ -372,12 +399,18 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             self.btn_FifoClearCANMsg.clicked.connect(ClearCANMsg)
 
             self.CAN_Db = TSDB() 
-            
+            self.FR_Db = [" "," "]
+            # 0 : dbc  1:xml
+            # BindChn 0: CHN1  1:CHN2
             # CAN DataBase 
-            def click_find_file_path():
+            def click_find_file_path(Type:int=0,BindChn = 0):
             # 设置文件扩展名过滤，同一个类型的不同格式如xlsx和xls 用空格隔开
-                filename, filetype = QFileDialog.getOpenFileName(self, "选取数据库文件",filter=
-                                                        "DBC(*.dbc);;xml(*.xml)")
+                if Type == 0:
+                    filename, filetype = QFileDialog.getOpenFileName(self, "选取数据库文件",filter=
+                                                        "DBC(*.dbc)")
+                elif Type == 1:
+                    filename, filetype = QFileDialog.getOpenFileName(self, "选取数据库文件",filter=
+                                                        "xml(*.xml)")
                 if filename != "": 
                     if filetype =="DBC(*.dbc)":
                         ret = self.CAN_Db.load_dbc(filename)
@@ -386,40 +419,37 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                         else:
                             self.statusBar.showMessage(ret[1])
                     elif filetype =="xml(*.xml)":
-                        self.FRDB = Fibex_parse(filename)
-                        model = QStandardItemModel(0, 2)
-                        model.setHeaderData(0, Qt.Horizontal, "Node")
-                        model.setHeaderData(1, Qt.Horizontal, "Comment")
-                        # model = QStandardItemModel(0, 2)
-                        # model.setHeaderData(0, Qt.Horizontal, "Node")
-                        # model.setHeaderData(1, Qt.Horizontal, "Comment")
-
-                        # for i in range(5):
-                        #     parent = QStandardItem("ECU")
-                        #     parent.setCheckable(True)
-                        #     for j in range(2):
-                        #         child_node = QStandardItem("node")
-                        #         child_node.setCheckable(True)
-                        #         parent.setChild(0, 0, child_node)
-                        #         parent.setChild(0, 1, QStandardItem("Comment"))
-                        #     model.appendRow(parent)
-                                
-                        # self.treeView.setModel(model)
-                        for i in self.FRDB.Ecus:
-                            if self.FRDB.Ecus[i]['startupFrame_ID'] != 0:
-                                parent = QStandardItem(QIcon(self.CurrentPath+"/../icon/318.svg"),f"{i}")
-                            else:
-                                parent = QStandardItem(QIcon(self.CurrentPath+"/../icon/077.svg"),f"{i}")
-                            parent.setCheckable(True)
-                            model.appendRow(parent)
-                            # Generate 7 child nodes for each top-level node
-                            for j in range(7):
-                                child = QStandardItem(f"Child Node {j}")
-                                child.setCheckable(True)
-                                parent.appendRow(child)
-                                
-                        self.treeView.setModel(model)
-                        
+                        if  BindChn < 2:
+                            FRDB = Fibex_parse(filename)
+                            self.FR_Db[BindChn] = FRDB
+                            Cluster = QStandardItem(QIcon(self.CurrentPath+"/../icon/318.svg"),FRDB.Cluster['Name'])
+                            self.tv_xmlList[BindChn].appendRow(Cluster)
+                            for i in FRDB.Ecus:
+                                if FRDB.Ecus[i]['startupFrame_ID'] != 0:
+                                    ECU = QStandardItem(QIcon(self.CurrentPath+"/../icon/318.svg"),f"{i}")
+                                else:
+                                    ECU = QStandardItem(QIcon(self.CurrentPath+"/../icon/077.svg"),f"{i}")
+                                ECU.setCheckable(True)
+                                Cluster.appendRow(ECU)   
+                                for Msgdir in range(2):
+                                    dir = QStandardItem(QIcon(self.CurrentPath+"/../icon/092.svg"),'Tx') if Msgdir==0 else QStandardItem(QIcon(self.CurrentPath+"/../icon/295.svg"),'Rx')
+                                    dir.setCheckable(True)
+                                    ECU.appendRow(dir)
+                                    if Msgdir==0:
+                                        for (idx, Msg) in enumerate(FRDB.Ecus[i]['TX_Frame']):
+                                            if Msg['SLOT-ID'] == FRDB.Ecus[i]['startupFrame_ID']:
+                                                child_node= QStandardItem(QIcon(self.CurrentPath+"/../icon/058.svg"),Msg['Name'])
+                                            else:
+                                                child_node= QStandardItem(QIcon(self.CurrentPath+"/../icon/092.svg"),Msg['Name'])
+                                            child_node.setCheckable(True)
+                                            dir.setChild(idx, 0, child_node)
+                                            dir.setChild(idx, 1, QStandardItem(str(Msg['SLOT-ID'])+" "+str(Msg['BASE-CYCLE'])+" "+str(Msg['CYCLE-REPETITION'])))
+                                    else:
+                                        for idx, Msg in enumerate(FRDB.Ecus[i]['RX_Frame']):
+                                            child_node= QStandardItem(QIcon(self.CurrentPath+"/../icon/295.svg"),Msg['Name'])
+                                            child_node.setCheckable(True)
+                                            dir.setChild(idx, 0, child_node)
+                                            dir.setChild(idx, 1, QStandardItem(str(Msg['SLOT-ID'])+" "+str(Msg['BASE-CYCLE'])+" "+str(Msg['CYCLE-REPETITION'])))
             self.btn_laodDBC.clicked.connect(click_find_file_path)
 
             # LIN API 
@@ -459,7 +489,77 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             self.btn_FifoClearLINMsg.clicked.connect(clearLINMsgs)
 
             # flexray API
-            self.btn_loadXml.clicked.connect(click_find_file_path)
+            self.ECU_Msgs = [{},{}]
+            self.FRMSG = [[],[]]
+
+            def on_treeview_clicked(index):
+                item = self.tv_xmlCHN1.model().itemFromIndex(index)
+                row = index.row() if index.isValid() else -1
+                depth = 0
+                parent = item.parent()
+                while parent is not None:
+                    depth += 1
+                    parent = parent.parent()
+                if depth == 1: 
+                    if item.checkState() == Qt.Checked:
+                        for i in range(item.parent().rowCount()):
+                            if item.parent().child(i)!=item:
+                                item.parent().child(i).setCheckState(Qt.Unchecked)
+                        print(item.text() + ' is checked')
+                    else:
+                        print(item.text() + ' is unchecked')
+                elif depth == 2:
+                    if item.checkState() == Qt.Checked:
+                        for i in range(item.rowCount()):
+                                item.child(i).setCheckState(Qt.Checked)
+                    else:
+                        for i in range(item.rowCount()):
+                                item.child(i).setCheckState(Qt.Unchecked)
+                elif depth == 3:
+                    if item.checkState() == Qt.Checked:
+                        print(item.text() + ' is checked')
+                    else:
+                        print(item.text() + ' is unchecked')
+
+            self.btn_LoadChn1.clicked.connect(partial(click_find_file_path, 1,0))
+            self.btn_LoadChn2.clicked.connect(partial(click_find_file_path, 1,1))
+            self.tv_xmlCHN1.clicked.connect(on_treeview_clicked)
+
+            # 异步发送
+            def Async_sendFlexrayMsg():
+                __SendMsg(__CreateMsg(is_flexray=True))
+            self.btn_asyncSendflexrayMsg.clicked.connect(Async_sendFlexrayMsg)
+            
+            # 同步发送
+            def sync_sendFlexrayMsg():
+                __SendMsg(__CreateMsg(is_flexray=True),is_asnyc=False)
+            self.btn_SyncSendflexrayMsg.clicked.connect(sync_sendFlexrayMsg)
+
+            def on_flexray_event(AFlexray):
+                if not __is_start_viewMsg(is_flexray=True): return
+                addItem(AFlexray.contents)
+            ONFlexRay = OnTx_RxFUNC_Flexray(on_flexray_event)
+
+            def reg_flexrayEvent():
+                tsapp_register_event_flexray(self.HwHandle,ONFlexRay)
+            self.btn_regflexrayCallBack.clicked.connect(reg_flexrayEvent)
+
+            def unreg_flexrayEvent():
+                tsapp_unregister_event_flexray(self.HwHandle,ONFlexRay)
+            self.btn_unregflexrayCallBack.clicked.connect(unreg_flexrayEvent)
+
+            def recvFlexrayMsgs():
+                fifo_recv(MSGType.FlexrayMSG)
+            self.btn_FifoRecvflexrayRxMsg.clicked.connect(recvFlexrayMsgs)
+
+            def recvFlexrayTxRxMsgs():
+                fifo_recv(MSGType.FlexrayMSG,includeTx=True)
+            self.btn_FifoRecvflexrayMsg.clicked.connect(recvFlexrayTxRxMsgs)
+
+            def clearFlexrayMsgs():
+                fifo_recv(MSGType.FlexrayMSG,is_read=False)
+            self.btn_FifoClearflexrayMsg.clicked.connect(clearFlexrayMsgs)
+
 
     except:
         pass
