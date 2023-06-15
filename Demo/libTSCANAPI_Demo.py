@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-15 21:25:05
+LastEditTime: 2023-06-15 21:32:12
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -585,10 +585,26 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                             self.FRMSG[i].sort(key=lambda k: (k.get('SLOT-ID', 0)))
                             fr_trigger = (TLibTrigger_def * fr_trigger_len)()
                             FrameLengthArray = (c_int * fr_trigger_len)()
+                            for idx in range(fr_trigger_len):
+                                FrameLengthArray[idx] = self.FRMSG[idx]['FDLC']
+                                fr_trigger[idx].frame_idx=i
+                                fr_trigger[idx].slot_id = self.FRMSG[idx]['SLOT-ID']
+                                fr_trigger[idx].cycle_code = self.FRMSG[idx]['BASE-CYCLE']+self.FRMSG[idx]['CYCLE-REPETITION']
+                                if idx == 0:
+                                    fr_trigger[idx].config_byte = 0X31
+                                elif fr_trigger[idx].slot_id>self.FR_Db[i].STATIC_SLOT:
+                                    fr_trigger[idx].config_byte = 0xA9
+                                else:
+                                    fr_trigger[idx].config_byte = 0X01
+                            tsflexray_start_net(self.HwHandle,i,1000)
+
+
             self.btn_flexrayStartNet.clicked.connect(start_flexray_net)
 
             def stop_flexray_net():
-                pass
+                for i in range(2):
+                    if self.ECU_Msgs[i] !=None:
+                        tsflexray_stop_net(self.HwHandle,i,1000)
 
     except:
         pass
