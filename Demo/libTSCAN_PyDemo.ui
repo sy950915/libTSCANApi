@@ -1321,12 +1321,12 @@
                      <widget class="QLabel" name="label_32">
                       <property name="maximumSize">
                        <size>
-                        <width>80</width>
+                        <width>90</width>
                         <height>16777215</height>
                        </size>
                       </property>
                       <property name="text">
-                       <string>CAN控制器模式</string>
+                       <string>LIN控制器模式</string>
                       </property>
                      </widget>
                     </item>

@@ -12,10 +12,9 @@ import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-
 class Ui_MainWindow(object):
-    __CurrentPath = os.path.dirname(__file__)
     def setupUi(self, MainWindow):
+        self.CurrentPath = os.path.dirname(__file__)
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1152, 790)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -39,7 +38,7 @@ class Ui_MainWindow(object):
         self.label_5 = QtWidgets.QLabel(self.groupBox)
         self.label_5.setMaximumSize(QtCore.QSize(100, 100))
         self.label_5.setText("")
-        self.label_5.setPixmap(QtGui.QPixmap(self.__CurrentPath+"/../icon/TOSUN_Pic2.png"))
+        self.label_5.setPixmap(QtGui.QPixmap(self.CurrentPath+"\\../icon/TOSUN_Pic2.png"))
         self.label_5.setScaledContents(True)
         self.label_5.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop)
         self.label_5.setWordWrap(False)
@@ -551,7 +550,7 @@ class Ui_MainWindow(object):
         self.cbb_LINchannelList.addItem("")
         self.horizontalLayout_15.addWidget(self.cbb_LINchannelList)
         self.label_32 = QtWidgets.QLabel(self.groupBox_8)
-        self.label_32.setMaximumSize(QtCore.QSize(80, 16777215))
+        self.label_32.setMaximumSize(QtCore.QSize(90, 16777215))
         self.label_32.setObjectName("label_32")
         self.horizontalLayout_15.addWidget(self.label_32)
         self.cbb_linType = QtWidgets.QComboBox(self.groupBox_8)
@@ -1091,7 +1090,7 @@ class Ui_MainWindow(object):
         self.cbb_LINchannelList.setItemText(15, _translate("MainWindow", "16"))
         self.cbb_LINchannelList.setItemText(16, _translate("MainWindow", "17"))
         self.cbb_LINchannelList.setItemText(17, _translate("MainWindow", "18"))
-        self.label_32.setText(_translate("MainWindow", "CAN控制器模式"))
+        self.label_32.setText(_translate("MainWindow", "LIN控制器模式"))
         self.cbb_linType.setItemText(0, _translate("MainWindow", "主节点"))
         self.cbb_linType.setItemText(1, _translate("MainWindow", "从节点"))
         self.label_31.setText(_translate("MainWindow", "LIN协议"))
