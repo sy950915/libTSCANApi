@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-16 11:03:52
+LastEditTime: 2023-06-16 11:09:58
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -52,6 +52,10 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                 ID = f"0x{Msg.FIdentifier:02x}"
             elif isinstance(Msg,TLIBFlexray):
                 ID = f"{Msg.FSlotId}"
+                if (Msg.FChannelMask&1) == 1:
+                    CHN +='A'
+                if (Msg.FChannelMask&2) == 2:
+                    CHN +='B'
             elif (Msg.FProperties >> 2 & 1) == 1:
                 ID = f"0x{Msg.FIdentifier:08x}x"
             else:
