@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-16 10:30:59
+LastEditTime: 2023-06-16 11:03:52
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -520,9 +520,10 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                         self.ECU_Msgs[idx][item.text()] = self.FR_Db[idx].Ecus[item.text()]  
                         self.ECUName[idx] = item.text()      
                     else:
-                        if item.text() in self.ECU_Msgs[idx]:
-                            self.ECU_Msgs[idx] = None
-                            self.ECUName[idx] = '' 
+                        if(len(self.FRMSG[idx])!=0):
+                            if item.text() in self.ECU_Msgs[idx]:
+                                self.ECU_Msgs[idx] = None
+                                self.ECUName[idx] = '' 
                 elif depth == 2:
                     if item.checkState() == Qt.Checked:
                         for i in range(item.rowCount()):
@@ -532,17 +533,19 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                     else:
                         for i in range(item.rowCount()):
                             item.child(i).setCheckState(Qt.Unchecked)
-                            Frame = self.FR_Db[idx].Ecus[item.parent().text()]['TX_Frame'][i]
-                            if self.FRMSG[idx].count(Frame) !=0:
-                                self.FRMSG[idx].remove(Frame)
+                            if(len(self.FRMSG[idx])!=0):
+                                Frame = self.FR_Db[idx].Ecus[item.parent().text()]['TX_Frame'][i]
+                                if self.FRMSG[idx].count(Frame) !=0:
+                                    self.FRMSG[idx].remove(Frame)
                 elif depth == 3:
                     Frame = self.FR_Db[idx].Ecus[item.parent().parent().text()]['TX_Frame'][row]
                     if item.checkState() == Qt.Checked:
                         self.FRMSG[idx].append(Frame)
                         # print(item.text() + ' is checked')
                     else:
-                        if self.FRMSG[idx].count(Frame) !=0:
-                            self.FRMSG[idx].remove(Frame)
+                        if(len(self.FRMSG[idx])!=0):
+                            if self.FRMSG[idx].count(Frame) !=0:
+                                self.FRMSG[idx].remove(Frame)
 
 
             self.btn_LoadChn1.clicked.connect(partial(click_find_file_path, 1,0))
