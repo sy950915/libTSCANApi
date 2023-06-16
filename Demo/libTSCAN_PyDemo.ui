@@ -24,7 +24,7 @@
        <item>
         <widget class="QTabWidget" name="tabWidget">
          <property name="currentIndex">
-          <number>4</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="tab_3">
           <attribute name="title">
@@ -49,7 +49,7 @@
                  <string/>
                 </property>
                 <property name="pixmap">
-                 <pixmap>../../TSMaster_Project/c#_pro/TSCAN.API.Demo_CSharp/Resources/TOSUN_Pic2.png</pixmap>
+                 <pixmap>../icon/TOSUN_Pic2.png</pixmap>
                 </property>
                 <property name="scaledContents">
                  <bool>true</bool>

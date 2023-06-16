@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-16 10:02:34
+LastEditTime: 2023-06-16 10:30:59
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -17,9 +17,6 @@ from PyQt5.QtCore import Qt
 import sys
 from Ui_libTSCAN_PyDemo import Ui_MainWindow
 from libTSCANAPI import *
-
-
-
 
 
 class ViewType:
@@ -41,13 +38,13 @@ class MyWindows(QMainWindow, Ui_MainWindow):
         Is_Connect = False
         Is_enable_bus = False
         __ShowMsgCount = 100
-        CurrentPath = os.path.dirname(__file__)
+        
         def __init__(self):
             super(MyWindows, self).__init__()
             self.setupUi(self)
             # self.cbb_BusMsgType.addItems(self.itmes)
             self.initUI()
-
+            self.CurrentPath = os.path.dirname(__file__)
         def tvAddRaw(self,Msg):
             Times = str(float(Msg.FTimeUs)/1000000.0)
             CHN = str(Msg.FIdxChn)
@@ -358,29 +355,30 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             self.btn_unregCANCallBack.clicked.connect(UnRegCANEvent)
 
             def fifo_recv(MsgType:MSGType,Chnidx:s32=0,includeTx:bool = False,is_read:bool =True):
+                BufferSize = s32(100)
                 if MsgType == MSGType.CANMSG:
                     if is_read:
                         TCANBuffer = (TLIBCAN*100)()
-                        BufferSize = 100 #buffersize 就是TCANBuffer的长度
-                        return tsfifo_receive_can_msgs(self.HwHandle,Chnidx,TCANBuffer,BufferSize,includeTx) #buffersize 是该次读取的报文数量
+                        #buffersize 就是TCANBuffer的长度
+                        return tsfifo_receive_can_msgs(self.HwHandle,TCANBuffer,BufferSize,Chnidx,includeTx) #buffersize 是该次读取的报文数量
                     return tsfifo_clear_can_receive_buffers(self.HwHandle,Chnidx)
                 elif MsgType == MSGType.CANFDMSG:
                     if is_read:
                         TCANFDBuffer = (TLIBCANFD*100)()
-                        BufferSize = 100 #buffersize 就是TLIBCANFD的长度
-                        tsfifo_receive_canfd_msgs(self.HwHandle,Chnidx,TCANFDBuffer,BufferSize,includeTx) #buffersize 是该次读取的报文数量
+                        #buffersize 就是TLIBCANFD的长度
+                        tsfifo_receive_canfd_msgs(self.HwHandle,TCANFDBuffer,BufferSize,Chnidx,includeTx) #buffersize 是该次读取的报文数量
                     return tsfifo_clear_canfd_receive_buffers(self.HwHandle,Chnidx)
                 elif MsgType == MSGType.LINMSG:
                     if is_read:
                         TLINBuffer = (TLIBLIN*100)()
-                        BufferSize = 100 #buffersize 就是TLINBuffer的长度
-                        tsfifo_receive_lin_msgs(self.HwHandle,Chnidx,TCANFDBuffer,TLINBuffer,includeTx) #buffersize 是该次读取的报文数量
+                        #buffersize 就是TLINBuffer的长度
+                        tsfifo_receive_lin_msgs(self.HwHandle,TCANFDBuffer,BufferSize,Chnidx,includeTx) #buffersize 是该次读取的报文数量
                     return tsfifo_clear_lin_receive_buffers(self.HwHandle,Chnidx)
                 elif MsgType == MSGType.FlexrayMSG:
                     if is_read: 
-                        TFlexrayBuffer = (TLIBLIN*100)()
-                        BufferSize = 100 #buffersize 就是TFlexrayBuffer的长度
-                        tsfifo_receive_flexray_msgs(self.HwHandle,Chnidx,TFlexrayBuffer,TLINBuffer,includeTx) #buffersize 是该次读取的报文数量
+                        TFlexrayBuffer = (TLIBFlexray*100)()
+                        #buffersize 就是TFlexrayBuffer的长度
+                        tsfifo_receive_flexray_msgs(self.HwHandle,TFlexrayBuffer,BufferSize,Chnidx,includeTx) #buffersize 是该次读取的报文数量
                     return tsfifo_clear_flexray_receive_buffers(self.HwHandle,Chnidx)
             
             def ReadRXFDMsg():
