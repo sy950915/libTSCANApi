@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-16 17:49:09
+LastEditTime: 2023-06-16 23:07:51
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -43,6 +43,8 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             self.setupUi(self)
             # self.cbb_BusMsgType.addItems(self.itmes)
             self.initUI()
+            self.startTime = time.perf_counter() 
+            self.__refreshTime = 0.1
             self.CurrentPath = os.path.dirname(__file__)
         def tvAddRaw(self,Msg):
             Times = str(float(Msg.FTimeUs)/1000000.0)
@@ -50,7 +52,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             if isinstance(Msg,TLIBLIN):
                 ID = f"0x{Msg.FIdentifier:02x}"
             elif isinstance(Msg,TLIBFlexray):
-                ID = f"{Msg.FSlotId}"
+                ID = f"({Msg.FSlotId} {Msg.FCycleNumber})"
                 if (Msg.FChannelMask&1) == 1:
                     CHN +='A'
                 if (Msg.FChannelMask&2) == 2:
@@ -100,6 +102,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             self.treemodel.setHeaderData(1, Qt.Horizontal, "Comment")
             self.tv_xmlCHN1.setModel(self.treemodel)
             self.tv_xmlCHN1.setEditTriggers(QAbstractItemView.NoEditTriggers)
+            
             self.treemode2 = QStandardItemModel(0, 2)
             self.treemode2.setHeaderData(0, Qt.Horizontal, "Node")
             self.treemode2.setHeaderData(1, Qt.Horizontal, "Comment")
@@ -108,6 +111,11 @@ class MyWindows(QMainWindow, Ui_MainWindow):
 
             self.tv_xmlList = [self.treemodel,self.treemode2]
 
+            self.CANtreemode = QStandardItemModel(0, 2)
+            self.CANtreemode.setHeaderData(0, Qt.Horizontal, "Name")
+            self.CANtreemode.setHeaderData(1, Qt.Horizontal, "value")
+            self.tv_canDB.setModel(self.CANtreemode)
+            self.tv_canDB.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
             # self.tv_MsgData.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)  # 所有列自动拉伸，充满界面
             
@@ -126,7 +134,8 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                 self.model.removeRows(0,self.model.rowCount())
                 
             self.actionClear.triggered.connect(clearModel) 
-
+            
+        
             def addItem(Msg) :
                 if self.model.rowCount()>=self.__ShowMsgCount:
                     self.model.removeRow(0)
@@ -331,14 +340,17 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             def On_CANFD_Event(ACANFD):
                 if not __is_start_viewMsg():
                     return
-                if not ACANFD.contents.FProperties&0x80:
-                    
-                    addItem(ACANFD.contents)
+                if time.perf_counter()-self.startTime>self.__refreshTime:
+                    self.startTime = time.perf_counter()
+                    if not ACANFD.contents.FProperties&0x80:
+                        addItem(ACANFD.contents)
             def On_CAN_Event(ACAN):
                 if not __is_start_viewMsg():
                     return
-                if not ACAN.contents.FProperties&0x80:
-                    addItem(ACAN.contents)
+                if time.perf_counter()-self.startTime>self.__refreshTime:
+                    self.startTime = time.perf_counter()
+                    if not ACAN.contents.FProperties&0x80:
+                        addItem(ACAN.contents)
             ONCANFDEVENT = OnTx_RxFUNC_CANFD(On_CANFD_Event)
             def RegCANFDEvent():
                 tsapp_register_event_canfd(self.HwHandle,ONCANFDEVENT)
@@ -428,6 +440,12 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                         ret = self.CAN_Db.load_dbc(filename)
                         if ret[0] == 0:
                             self.statusBar.showMessage("load "+filename+ " successed")
+                            for Name in self.CAN_Db.dbc_list_by_name:
+                                Frame = QStandardItem(QIcon(self.CurrentPath+"/icon/092.svg"),Name)
+                                self.CANtreemode.appendRow(Frame)
+                                for idx,signal in enumerate(self.CAN_Db.dbc_list_by_name[Name]._signals):
+                                    Frame.setChild(idx,0,QStandardItem(QIcon(self.CurrentPath+"/icon/092.svg"),signal.name))
+                                    Frame.setChild(idx,1,QStandardItem(str(signal.initial)))
                         else:
                             self.statusBar.showMessage(ret[1])
                     elif filetype =="xml(*.xml)":
@@ -462,7 +480,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                                             # child_node.setCheckable(True)
                                             dir.setChild(idx, 0, child_node)
                                             dir.setChild(idx, 1, QStandardItem(str(Msg['SLOT-ID'])+" "+str(Msg['BASE-CYCLE'])+" "+str(Msg['CYCLE-REPETITION'])))
-            self.btn_laodDBC.clicked.connect(click_find_file_path)
+            self.actionLoadCANDB.triggered.connect(click_find_file_path)
 
             # LIN API 
             def configLin():
@@ -482,7 +500,9 @@ class MyWindows(QMainWindow, Ui_MainWindow):
 
             def on_lin_event(ALIN):
                 if not __is_start_viewMsg(is_lin=True): return
-                addItem(ALIN.contents)
+                if time.perf_counter()-self.startTime>self.__refreshTime:
+                    self.startTime = time.perf_counter()
+                    addItem(ALIN.contents)
             ONLIN = OnTx_RxFUNC_LIN(on_lin_event)
             def reg_linEvent():
                 tsapp_register_event_lin(self.HwHandle,ONLIN)
@@ -504,6 +524,26 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             self.ECU_Msgs = [None,None]
             self.ECUName = ['','']
             self.FRMSG = [[],[]]
+
+            def unload_db(idx):
+                if idx<2:
+                    self.tv_xmlList[idx].clear()
+                    self.ECU_Msgs[idx] = None
+                    self.ECUName[idx] = ''
+                    self.FRMSG[idx] = []
+                else:
+                    self.tv_xmlList[0].clear()
+                    self.tv_xmlList[1].clear()
+                    self.ECU_Msgs = [None,None]
+                    self.ECUName = ['','']
+                    self.FRMSG = [[],[]]
+            def unload_xml_1():
+                unload_db(0)
+            def unload_xml_2():
+                unload_db(1)
+            self.actionUnLoadFR1.triggered.connect(unload_xml_1)
+
+            self.actionUnLoadFR1.triggered.connect(unload_xml_2)
 
             def on_treeview_clicked(index,idx):
                 item = self.tv_xmlList[idx].itemFromIndex(index)
@@ -572,7 +612,9 @@ class MyWindows(QMainWindow, Ui_MainWindow):
 
             def on_flexray_event(AFlexray):
                 if not __is_start_viewMsg(is_flexray=True): return
-                addItem(AFlexray.contents)
+                if time.perf_counter()-self.startTime>self.__refreshTime:
+                    self.startTime = time.perf_counter()
+                    addItem(AFlexray.contents)
             ONFlexRay = OnTx_RxFUNC_Flexray(on_flexray_event)
 
             def reg_flexrayEvent():
@@ -615,7 +657,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                                     fr_trigger[idx].config_byte = 0xA9
                                 else:
                                     fr_trigger[idx].config_byte = 0X01
-                            tsflexray_set_controller_frametrigger(self.HwHandle, i, FlexrayConfig, FrameLengthArray, fr_trigger_len, fr_trigger, fr_trigger_len, 2000)
+                            tsflexray_set_controller_frametrigger(self.HwHandle, i, FlexrayConfig, FrameLengthArray, fr_trigger_len, fr_trigger, fr_trigger_len, 1000)
                             tsflexray_start_net(self.HwHandle,i,1000)
             self.btn_flexrayStartNet.clicked.connect(start_flexray_net)
 

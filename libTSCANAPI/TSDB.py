@@ -78,13 +78,14 @@ def msg_convert_tosun(msg):
         raise (f'Unknown message type: {type(msg)}')
 
 class TSDB():
-    filenames = []
-    dbc_list_by_id = {}
+    
 
     def __init__(self, dbcfile=''):
+        self.filenames = []
+        self.dbc_list_by_id = {}
+        self.dbc_list_by_name = {}
         if dbcfile !='':
             self.load_dbc(dbcfile)
-
     def load_dbc(self, dbcfile):
         '''return db index'''
         if dbcfile != '':
@@ -97,8 +98,9 @@ class TSDB():
             try:
                 db = cantools.db.load_file(dbcfile)
                 for msg in db.messages:
-                    if  msg.frame_id not in self.dbc_list_by_id:
+                    if  (msg.frame_id not in self.dbc_list_by_id) and (msg.name not in self.dbc_list_by_name):
                         self.dbc_list_by_id[msg.frame_id] = msg
+                        self.dbc_list_by_name[msg.name] = msg
                     else:
                         print(msg.name, ' already exists')
                 return 0,"load successed"
@@ -121,9 +123,21 @@ class TSDB():
             return msg
         except Exception as e:
             print(e)
-
-    def set_signal_value(self, msg:TLIBCAN or TLIBCANFD or Message, signal_dict: dict):
-        msg = tosun_convert_msg(msg)
+    def __Creat_Msg(self,_msg:int or str,AChannel = 0):
+        if isinstance(_msg,int):
+            if _msg in self.dbc_list_by_id:
+                return Message(channel=AChannel,arbitration_id=_msg,is_fd=self.dbc_list_by_id[_msg]._is_fd,is_extended_id=self.dbc_list_by_id[_msg]._is_extended_frame,dlc=DLC_DATA_BYTE_CNT(self.dbc_list_by_id[_msg]._length))
+        elif isinstance(_msg,str):
+            if _msg in self.dbc_list_by_name:
+                return Message(channel=AChannel,arbitration_id=_msg,is_fd=self.dbc_list_by_id[_msg]._is_fd,is_extended_id=self.dbc_list_by_name[_msg]._is_extended_frame,dlc=DLC_DATA_BYTE_CNT(self.dbc_list_by_name[_msg]._length))
+        return None
+    def set_signal_value(self, msg:TLIBCAN or TLIBCANFD or Message or int or str, signal_dict: dict,AChannel = 0):
+        if isinstance(msg,int) or isinstance(msg,str): 
+            msg = self.__Creat_Msg(msg,AChannel)
+        else:
+            msg = tosun_convert_msg(msg,AChannel)
+        if msg ==None:
+            print("MSG Type error")
         if msg.arbitration_id in self.dbc_list_by_id:
             msg.dlc = self.dbc_list_by_id[msg.arbitration_id].length
             return msg_convert_tosun(self.__change_signal_value(msg, signal_dict))
@@ -133,7 +147,6 @@ class TSDB():
             if isinstance(msg, Message):
                 signaldict = self.dbc_list_by_id[msg.arbitration_id].decode(
                     data=msg.data)
-
             elif isinstance(msg, TLIBCAN) or isinstance(msg, TLIBCANFD):
                 signaldict = self.dbc_list_by_id[msg.FIdentifier].decode(
                     data=bytes(msg.FData))

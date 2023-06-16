@@ -10,7 +10,7 @@ from .config import *
 from .TSPrase_Fibex import *
 import atexit
 try :
-    import can
+    
     def updateFile(file,old_str,new_str):
         file_data = ""
         with open(file, "r", encoding="utf-8") as f:
@@ -20,13 +20,23 @@ try :
                 file_data += line
         with open(file,"w",encoding="utf-8") as f:
             f.write(file_data)
-    libtosun_path = os.path.join(_curr_path, 'libtosun.py')
-    if IS_ADD_PYTHON_CAN and os.path.exists(libtosun_path) :
-        can_path = os.path.dirname(can.__file__) #for pyinstaller to find the compiled module
-        old_str = '"socketcand": ("can.interfaces.socketcand", "SocketCanDaemonBus"),'
-        new_str = old_str + '\n"libtosun":("can.interfaces.libtosun","libtosunBus"),'
-        updateFile(os.path.join(can_path, 'interfaces/__init__.py'),old_str,new_str)
-        shutil.move(libtosun_path,os.path.join(can_path, 'interfaces'))
+    
+    if IS_ADD_PYTHON_CAN:
+        import can
+        libtosun_path = os.path.join(_curr_path, 'libtosun.py')
+        if os.path.isfile(libtosun_path) :
+            can_path = os.path.dirname(can.__file__) #for pyinstaller to find the compiled module
+            old_str = '"socketcand": ("can.interfaces.socketcand", "SocketCanDaemonBus"),'
+            new_str = old_str + '\n"libtosun":("can.interfaces.libtosun","libtosunBus"),'
+            updateFile(os.path.join(can_path, 'interfaces/__init__.py'),old_str,new_str)
+            shutil.move(libtosun_path,os.path.join(can_path, 'interfaces'))
+    
+    current_dbc_path = os.path.join(_curr_path, 'dbc.py')
+    if os.path.isfile(current_dbc_path):
+        import cantools
+        cantools_path = os.path.dirname(cantools.__file__)
+        dbc_path = os.path.join(cantools_path, 'database/can/formats')
+        shutil.move(libtosun_path,dbc_path)
 except:
     pass
 initialize_lib_tscan(True,True,False)

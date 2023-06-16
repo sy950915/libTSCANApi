@@ -11,10 +11,17 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>TSBusTools</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>icon/267.svg</normaloff>icon/267.svg</iconset>
+  </property>
+  <property name="windowOpacity">
+   <double>3.000000000000000</double>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout_51">
     <item>
      <widget class="QGroupBox" name="groupBox_2">
       <property name="title">
@@ -24,7 +31,7 @@
        <item>
         <widget class="QTabWidget" name="tabWidget">
          <property name="currentIndex">
-          <number>0</number>
+          <number>2</number>
          </property>
          <widget class="QWidget" name="tab_3">
           <attribute name="title">
@@ -1179,19 +1186,62 @@
           <attribute name="title">
            <string>CAN DataBase</string>
           </attribute>
-          <widget class="QPushButton" name="btn_laodDBC">
-           <property name="geometry">
-            <rect>
-             <x>160</x>
-             <y>10</y>
-             <width>75</width>
-             <height>23</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>PushButton</string>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="horizontalLayout_52">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_50">
+             <item>
+              <widget class="QTreeView" name="tv_canDB"/>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_19">
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_18">
+                 <item>
+                  <widget class="QLabel" name="label_37">
+                   <property name="text">
+                    <string>None</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_49">
+                   <item>
+                    <widget class="QLineEdit" name="lineEdit"/>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_Confirm">
+                     <property name="text">
+                      <string>确认</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_48">
+                 <item>
+                  <widget class="QPushButton" name="btn_sendDBMsg">
+                   <property name="text">
+                    <string>发送</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButton">
+                   <property name="text">
+                    <string>停止</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </widget>
          <widget class="QWidget" name="tab">
           <attribute name="title">
@@ -2120,12 +2170,54 @@
     </property>
     <addaction name="actionClear"/>
    </widget>
+   <widget class="QMenu" name="menu_2">
+    <property name="title">
+     <string>清除数据库</string>
+    </property>
+    <addaction name="actionUnLoadFR1"/>
+    <addaction name="actionUnLoadFR2"/>
+    <addaction name="actionUnLoadCAN"/>
+    <addaction name="actionUnLoads"/>
+   </widget>
+   <widget class="QMenu" name="menu_DBC">
+    <property name="title">
+     <string>加载数据库</string>
+    </property>
+    <addaction name="actionLoadCANDB"/>
+   </widget>
    <addaction name="menu"/>
+   <addaction name="menu_DBC"/>
+   <addaction name="menu_2"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionClear">
    <property name="text">
     <string>Clear</string>
+   </property>
+  </action>
+  <action name="actionUnLoadFR1">
+   <property name="text">
+    <string>UnLoadFR1</string>
+   </property>
+  </action>
+  <action name="actionUnLoadFR2">
+   <property name="text">
+    <string>UnLoadFR2</string>
+   </property>
+  </action>
+  <action name="actionUnLoadCAN">
+   <property name="text">
+    <string>UnLoadCAN</string>
+   </property>
+  </action>
+  <action name="actionUnLoads">
+   <property name="text">
+    <string>UnLoads</string>
+   </property>
+  </action>
+  <action name="actionLoadCANDB">
+   <property name="text">
+    <string>LoadCANDB</string>
    </property>
   </action>
  </widget>
