@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-16 15:28:56
+LastEditTime: 2023-06-16 15:57:17
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -599,7 +599,6 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                 for i in range(2):
                     if self.ECU_Msgs[i] !=None:
                         FlexrayConfig = TLibFlexray_controller_config().set_controller_config(self.ECU_Msgs[i][self.ECUName[i]],is_open_a=True, is_open_b=True, enable100_b=True, is_show_nullframe=False,is_Bridging=True)
-                    # list.sort(key=function, reverse=boolean)
                         fr_trigger_len = len(self.FRMSG[i])
                         if fr_trigger_len!=0:
                             self.FRMSG[i].sort(key=lambda k: (k.get('SLOT-ID', 0)))
@@ -612,15 +611,12 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                                 fr_trigger[idx].cycle_code = self.FRMSG[i][idx]['BASE-CYCLE']+self.FRMSG[i][idx]['CYCLE-REPETITION']
                                 if fr_trigger[idx].slot_id == fr_trigger[0].slot_id:
                                     fr_trigger[idx].config_byte = 0X31
-                                    print(fr_trigger[0].slot_id,fr_trigger[0].cycle_code)
                                 elif fr_trigger[idx].slot_id>self.FR_Db[i].STATIC_SLOT:
                                     fr_trigger[idx].config_byte = 0xA9
                                 else:
                                     fr_trigger[idx].config_byte = 0X01
                             tsflexray_set_controller_frametrigger(self.HwHandle, i, FlexrayConfig, FrameLengthArray, fr_trigger_len, fr_trigger, fr_trigger_len, 2000)
                             tsflexray_start_net(self.HwHandle,i,1000)
-
-
             self.btn_flexrayStartNet.clicked.connect(start_flexray_net)
 
             def stop_flexray_net():
