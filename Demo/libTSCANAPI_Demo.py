@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-15 21:32:12
+LastEditTime: 2023-06-16 10:02:34
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -53,14 +53,22 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             CHN = str(Msg.FIdxChn)
             if isinstance(Msg,TLIBLIN):
                 ID = f"0x{Msg.FIdentifier:02x}"
+            elif isinstance(Msg,TLIBFlexray):
+                ID = f"{Msg.FSlotId}"
             elif (Msg.FProperties >> 2 & 1) == 1:
                 ID = f"0x{Msg.FIdentifier:08x}x"
             else:
                 ID = f"0x{Msg.FIdentifier:03x}"
-            Dir = 'TX' if (Msg.FProperties & 1) == 1 else 'RX' 
-            DLC = str(Msg.FDLC)
+            if isinstance(Msg,TLIBFlexray):
+                DLC = Msg.FActualPayloadLength
+                Dir = 'TX' if (Msg.FDir & 1) == 1 else 'RX'
+                DataLen = DLC
+            else:
+                DLC = str(Msg.FDLC)
+                Dir = 'TX' if (Msg.FProperties & 1) == 1 else 'RX'
+                DataLen = DLC_DATA_BYTE_CNT[Msg.FDLC]
             data_strings = []
-            for i in range(DLC_DATA_BYTE_CNT[Msg.FDLC]):
+            for i in range(DataLen):
                 data_strings.append(f"{Msg.FData[i]:02x}")
             Data = f"{' '.join(data_strings)}"
             if isinstance(Msg,TLIBCAN):
@@ -69,6 +77,8 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                 Type = "CANFD" if Msg.FFDProperties&1 else "CAN"
             elif isinstance(Msg,TLIBLIN):
                 Type = "LIN"
+            elif isinstance(Msg,TLIBFlexray):
+                Type = "FR"
             else:
                 Type = "None"
             return [QStandardItem(Times),
@@ -519,9 +529,14 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                     if item.checkState() == Qt.Checked:
                         for i in range(item.rowCount()):
                             item.child(i).setCheckState(Qt.Checked)
+                            Frame = self.FR_Db[idx].Ecus[item.parent().text()]['TX_Frame'][i]
+                            self.FRMSG[idx].append(Frame)
                     else:
                         for i in range(item.rowCount()):
                             item.child(i).setCheckState(Qt.Unchecked)
+                            Frame = self.FR_Db[idx].Ecus[item.parent().text()]['TX_Frame'][i]
+                            if self.FRMSG[idx].count(Frame) !=0:
+                                self.FRMSG[idx].remove(Frame)
                 elif depth == 3:
                     Frame = self.FR_Db[idx].Ecus[item.parent().parent().text()]['TX_Frame'][row]
                     if item.checkState() == Qt.Checked:
@@ -579,7 +594,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             def start_flexray_net():
                 for i in range(2):
                     if self.ECU_Msgs[i] !=None:
-                        FlexrayConfig1 = TLibFlexray_controller_config().set_controller_config(self.ECU_Msgs[i][self.ECUName[i]],is_open_a=True, is_open_b=True, enable100_b=True, is_show_nullframe=False,is_Bridging=True)
+                        FlexrayConfig = TLibFlexray_controller_config().set_controller_config(self.ECU_Msgs[i][self.ECUName[i]],is_open_a=True, is_open_b=True, enable100_b=True, is_show_nullframe=False,is_Bridging=True)
                     # list.sort(key=function, reverse=boolean)
                         fr_trigger_len = len(self.FRMSG[i])
                         if fr_trigger_len!=0:
@@ -597,6 +612,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                                     fr_trigger[idx].config_byte = 0xA9
                                 else:
                                     fr_trigger[idx].config_byte = 0X01
+                            tsflexray_set_controller_frametrigger(self.HwHandle, i, FlexrayConfig, FrameLengthArray, fr_trigger_len, fr_trigger, fr_trigger_len, 1000)
                             tsflexray_start_net(self.HwHandle,i,1000)
 
 
@@ -606,6 +622,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                 for i in range(2):
                     if self.ECU_Msgs[i] !=None:
                         tsflexray_stop_net(self.HwHandle,i,1000)
+            self.btn_flexrayStopNet.clicked.connect(stop_flexray_net)
 
     except:
         pass
