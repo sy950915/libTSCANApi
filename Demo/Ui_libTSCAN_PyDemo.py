@@ -38,7 +38,7 @@ class Ui_MainWindow(object):
         self.label_5 = QtWidgets.QLabel(self.groupBox)
         self.label_5.setMaximumSize(QtCore.QSize(100, 100))
         self.label_5.setText("")
-        self.label_5.setPixmap(QtGui.QPixmap(self.CurrentPath+"/../icon/TOSUN_Pic2.png"))
+        self.label_5.setPixmap(QtGui.QPixmap(self.CurrentPath+"/icon/TOSUN_Pic2.png"))
         self.label_5.setScaledContents(True)
         self.label_5.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop)
         self.label_5.setWordWrap(False)

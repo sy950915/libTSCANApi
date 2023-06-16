@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-16 15:57:17
+LastEditTime: 2023-06-16 17:49:09
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -434,31 +434,31 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                         if  BindChn < 2:
                             FRDB = Fibex_parse(filename)
                             self.FR_Db[BindChn] = FRDB
-                            Cluster = QStandardItem(QIcon(self.CurrentPath+"/../icon/079.svg"),FRDB.Cluster['Name'])
+                            Cluster = QStandardItem(QIcon(self.CurrentPath+"/icon/079.svg"),FRDB.Cluster['Name'])
                             self.tv_xmlList[BindChn].appendRow(Cluster)
                             for i in FRDB.Ecus:
                                 if FRDB.Ecus[i]['startupFrame_ID'] != 0:
-                                    ECU = QStandardItem(QIcon(self.CurrentPath+"/../icon/318.svg"),f"{i}")
+                                    ECU = QStandardItem(QIcon(self.CurrentPath+"/icon/318.svg"),f"{i}")
                                 else:
-                                    ECU = QStandardItem(QIcon(self.CurrentPath+"/../icon/077.svg"),f"{i}")
+                                    ECU = QStandardItem(QIcon(self.CurrentPath+"/icon/077.svg"),f"{i}")
                                 ECU.setCheckable(True)
                                 Cluster.appendRow(ECU)   
                                 for Msgdir in range(2):
-                                    dir = QStandardItem(QIcon(self.CurrentPath+"/../icon/092.svg"),'Tx') if Msgdir==0 else QStandardItem(QIcon(self.CurrentPath+"/../icon/295.svg"),'Rx')
+                                    dir = QStandardItem(QIcon(self.CurrentPath+"/icon/092.svg"),'Tx') if Msgdir==0 else QStandardItem(QIcon(self.CurrentPath+"/icon/295.svg"),'Rx')
                                     ECU.appendRow(dir)
                                     if Msgdir==0:
                                         dir.setCheckable(True)
                                         for (idx, Msg) in enumerate(FRDB.Ecus[i]['TX_Frame']):
                                             if Msg['SLOT-ID'] == FRDB.Ecus[i]['startupFrame_ID']:
-                                                child_node= QStandardItem(QIcon(self.CurrentPath+"/../icon/058.svg"),Msg['Name'])
+                                                child_node= QStandardItem(QIcon(self.CurrentPath+"/icon/058.svg"),Msg['Name'])
                                             else:
-                                                child_node= QStandardItem(QIcon(self.CurrentPath+"/../icon/092.svg"),Msg['Name'])
+                                                child_node= QStandardItem(QIcon(self.CurrentPath+"/icon/092.svg"),Msg['Name'])
                                             child_node.setCheckable(True)
                                             dir.setChild(idx, 0, child_node)
                                             dir.setChild(idx, 1, QStandardItem(str(Msg['SLOT-ID'])+" "+str(Msg['BASE-CYCLE'])+" "+str(Msg['CYCLE-REPETITION'])))
                                     else:
                                         for idx, Msg in enumerate(FRDB.Ecus[i]['RX_Frame']):
-                                            child_node= QStandardItem(QIcon(self.CurrentPath+"/../icon/295.svg"),Msg['Name'])
+                                            child_node= QStandardItem(QIcon(self.CurrentPath+"/icon/295.svg"),Msg['Name'])
                                             # child_node.setCheckable(True)
                                             dir.setChild(idx, 0, child_node)
                                             dir.setChild(idx, 1, QStandardItem(str(Msg['SLOT-ID'])+" "+str(Msg['BASE-CYCLE'])+" "+str(Msg['CYCLE-REPETITION'])))
