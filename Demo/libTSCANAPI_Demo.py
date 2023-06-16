@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-16 11:09:58
+LastEditTime: 2023-06-16 15:28:56
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -34,12 +34,11 @@ def str2List(strData):
 class MyWindows(QMainWindow, Ui_MainWindow):
     # itmes = ["CAN总线负载率", "CAN总线峰值负载率", "", "", "", "", "", "","", "", "", ""]
     try:
-        HwHandle = size_t(0)
-        Is_Connect = False
-        Is_enable_bus = False
-        __ShowMsgCount = 100
-        
         def __init__(self):
+            self.HwHandle = size_t(0)
+            self.Is_Connect = False
+            self.Is_enable_bus = False
+            self.__ShowMsgCount = 100
             super(MyWindows, self).__init__()
             self.setupUi(self)
             # self.cbb_BusMsgType.addItems(self.itmes)
@@ -47,7 +46,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             self.CurrentPath = os.path.dirname(__file__)
         def tvAddRaw(self,Msg):
             Times = str(float(Msg.FTimeUs)/1000000.0)
-            CHN = str(Msg.FIdxChn)
+            CHN = str(Msg.FIdxChn+1)
             if isinstance(Msg,TLIBLIN):
                 ID = f"0x{Msg.FIdentifier:02x}"
             elif isinstance(Msg,TLIBFlexray):
@@ -611,13 +610,14 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                                 fr_trigger[idx].frame_idx=i
                                 fr_trigger[idx].slot_id = self.FRMSG[i][idx]['SLOT-ID']
                                 fr_trigger[idx].cycle_code = self.FRMSG[i][idx]['BASE-CYCLE']+self.FRMSG[i][idx]['CYCLE-REPETITION']
-                                if idx == 0:
+                                if fr_trigger[idx].slot_id == fr_trigger[0].slot_id:
                                     fr_trigger[idx].config_byte = 0X31
+                                    print(fr_trigger[0].slot_id,fr_trigger[0].cycle_code)
                                 elif fr_trigger[idx].slot_id>self.FR_Db[i].STATIC_SLOT:
                                     fr_trigger[idx].config_byte = 0xA9
                                 else:
                                     fr_trigger[idx].config_byte = 0X01
-                            tsflexray_set_controller_frametrigger(self.HwHandle, i, FlexrayConfig, FrameLengthArray, fr_trigger_len, fr_trigger, fr_trigger_len, 1000)
+                            tsflexray_set_controller_frametrigger(self.HwHandle, i, FlexrayConfig, FrameLengthArray, fr_trigger_len, fr_trigger, fr_trigger_len, 2000)
                             tsflexray_start_net(self.HwHandle,i,1000)
 
 
