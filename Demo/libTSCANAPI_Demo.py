@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-16 23:07:51
+LastEditTime: 2023-06-17 23:37:28
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -17,7 +17,6 @@ from PyQt5.QtCore import Qt
 import sys
 from Ui_libTSCAN_PyDemo import Ui_MainWindow
 from libTSCANAPI import *
-
 
 class ViewType:
     CallBackType = 0
@@ -233,7 +232,6 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             
             def __CreateMsg(is_lin =False,is_flexray =False):
                 FPro = 1
-                
                 FId = 0x12
                 if is_lin:
                     str_id = self.tb_linId.text().strip().replace("0x",'')
@@ -244,13 +242,13 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                     Msg = TLIBLIN(FIdxChn=self.cbb_LINchannelList.currentIndex(),FIdentifier=FId,FProperties=FPro,FData=data)
                     return Msg
                 elif is_flexray:
-                    str_id = self.tb_linId.text().strip().replace("0x",'')
+                    str_id = self.tb_FlexRayId.text().strip().replace("0x",'')
                     if str_id.isdigit():
                         FId = int(str_id,10)
-                    str_cyclic = self.tb_linId.text().strip().replace("0x",'')
+                    str_cyclic = self.tb_FlexRayId.text().strip().replace("0x",'')
                     if str_cyclic.isdigit():
-                        Fcyclic = int(str_id,10)
-                    data = str2List(self.tb_LINMsgData.text())
+                        Fcyclic = int(str_cyclic,10)
+                    data = str2List(self.tb_FlexrayMsgData.text())
                     Msg = TLIBFlexray(FIdxChn=self.cbb_FlexraychannelList.currentIndex(),FSlotId =FId,FCycleNumber=Fcyclic,FData=data)
                     return Msg
                 else:
@@ -271,11 +269,14 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                     Msg = TLIBCAN(FIdxChn=self.cbb_channelList.currentIndex(),FDLC=self.cbb_canDLC.currentIndex(),FIdentifier=FId,FData = data,FProperties=FPro)
                 return Msg
             
-            def __SendMsg(msg,is_cyclic=False,is_asnyc=True,is_send=True):
-                timeout = 100
-                ATimeout = self.tb_CycliTime.text().strip()
-                if ATimeout.isdigit():
-                    timeout = int(ATimeout,16)
+            def __SendMsg(msg,is_cyclic=False,is_asnyc=True,is_send=True,Atimeout = 0):
+                if Atimeout != 0:
+                    timeout = Atimeout
+                else:
+                    timeout = 100
+                    ATimeout = self.tb_CycliTime.text().strip()
+                    if ATimeout.isdigit():
+                        timeout = int(ATimeout,16)
                 if isinstance(msg,TLIBCANFD):
                     if not is_send:
                         return tsapp_delete_cyclic_msg_canfd(self.HwHandle,msg)
@@ -301,6 +302,14 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                         return tsapp_transmit_lin_async(self.HwHandle,msg)
                     else:
                         return tsapp_transmit_lin_sync(self.HwHandle,msg,timeout)
+                elif isinstance(msg,TLIBFlexray):
+                    # if not is_send:
+                    #     return tsapp_delete_cyclic_msg_canfd(self.HwHandle,msg)
+                    if is_asnyc:
+                        return tsapp_transmit_flexray_async(self.HwHandle,msg)
+                    else:
+                        return tsapp_transmit_flexray_sync(self.HwHandle,msg,timeout)    
+
                 else:
                     return -1
             # def 
@@ -441,11 +450,14 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                         if ret[0] == 0:
                             self.statusBar.showMessage("load "+filename+ " successed")
                             for Name in self.CAN_Db.dbc_list_by_name:
-                                Frame = QStandardItem(QIcon(self.CurrentPath+"/icon/092.svg"),Name)
+                                if self.CAN_Db.dbc_list_by_name[Name]._is_fd:
+                                    Frame = QStandardItem(QIcon(self.CurrentPath+"/icon/166.svg"),Name)
+                                else:
+                                    Frame = QStandardItem(QIcon(self.CurrentPath+"/icon/161.svg"),Name)
                                 self.CANtreemode.appendRow(Frame)
                                 for idx,signal in enumerate(self.CAN_Db.dbc_list_by_name[Name]._signals):
-                                    Frame.setChild(idx,0,QStandardItem(QIcon(self.CurrentPath+"/icon/092.svg"),signal.name))
-                                    Frame.setChild(idx,1,QStandardItem(str(signal.initial)))
+                                    Frame.setChild(idx,0,QStandardItem(QIcon(self.CurrentPath+"/icon/075.svg"),signal.name))
+                                    Frame.setChild(idx,1,QStandardItem(str(signal.invalid if signal.invalid !=None else 0)))
                         else:
                             self.statusBar.showMessage(ret[1])
                     elif filetype =="xml(*.xml)":
@@ -468,9 +480,9 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                                         dir.setCheckable(True)
                                         for (idx, Msg) in enumerate(FRDB.Ecus[i]['TX_Frame']):
                                             if Msg['SLOT-ID'] == FRDB.Ecus[i]['startupFrame_ID']:
-                                                child_node= QStandardItem(QIcon(self.CurrentPath+"/icon/058.svg"),Msg['Name'])
+                                                child_node= QStandardItem(QIcon(self.CurrentPath+"/icon/427.svg"),Msg['Name'])
                                             else:
-                                                child_node= QStandardItem(QIcon(self.CurrentPath+"/icon/092.svg"),Msg['Name'])
+                                                child_node= QStandardItem(QIcon(self.CurrentPath+"/icon/058.svg"),Msg['Name'])
                                             child_node.setCheckable(True)
                                             dir.setChild(idx, 0, child_node)
                                             dir.setChild(idx, 1, QStandardItem(str(Msg['SLOT-ID'])+" "+str(Msg['BASE-CYCLE'])+" "+str(Msg['CYCLE-REPETITION'])))
@@ -481,8 +493,56 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                                             dir.setChild(idx, 0, child_node)
                                             dir.setChild(idx, 1, QStandardItem(str(Msg['SLOT-ID'])+" "+str(Msg['BASE-CYCLE'])+" "+str(Msg['CYCLE-REPETITION'])))
             self.actionLoadCANDB.triggered.connect(click_find_file_path)
+# CANDataBases
+            self.canItem = None
+            self.Frame_idx = 0
+            def doubleClickEvent(index):
+                item = self.CANtreemode.itemFromIndex(index)
+                row = index.row() if index.isValid() else -1
+                depth = 0
+                parent = item.parent()
+                while parent is not None:
+                    depth += 1
+                    parent = parent.parent()
+                if depth == 1 and index.column()==0:
+                    self.canItem = item
+                    self.Frame_idx = row
+                    self.lb_canMsgInfo.setText(item.parent().text()+"/"+item.text())
+            self.tv_canDB.doubleClicked.connect(doubleClickEvent)
 
-            # LIN API 
+            def setSignalValue():
+                if self.canItem != None: 
+                    Avalue = self.le_CANSignalValue.text().strip().replace("0x",'')
+                    if Avalue.isdigit():
+                        Avalue = float(Avalue)
+                    else:
+                        if Avalue.count('.') == 1:
+                            Aleft,Aright= Avalue.split('.')
+                            if Aleft.replace("-",'').isdigit() and Aright.isdigit():
+                                Avalue = float(Avalue)
+                        else:
+                            Avalue = 0
+                    self.CAN_Db.dbc_list_by_name[self.canItem.parent().text()]._signals[self.Frame_idx].invalid = Avalue
+                    self.canItem.parent().setChild(self.Frame_idx,1,QStandardItem(str(Avalue)))
+            self.btn_Confirm.clicked.connect(setSignalValue)
+
+            def SendMsg():
+                if self.canItem != None: 
+                    Signals_dict = {}
+                    for i in range(self.canItem.parent().rowCount()):
+                        Signals_dict[self.canItem.parent().child(i,0).text()] = float(self.canItem.parent().child(i,1).text())
+                    Msg = self.CAN_Db.set_signal_value(self.canItem.parent().text(), Signals_dict,AChannel=self.cbb_channelList.currentIndex())
+                    ATimeout = self.CAN_Db.dbc_list_by_name[self.canItem.parent().text()].cycle_time 
+                    if ATimeout:
+                        __SendMsg(Msg,is_cyclic=True,Atimeout=ATimeout)
+                    else: 	  
+                        __SendMsg(Msg)
+            self.btn_sendDBMsg.clicked.connect(SendMsg)
+
+
+            
+
+# LIN API 
             def configLin():
                 if 0 ==tsapp_configure_baudrate_lin(self.HwHandle,self.cbb_LINchannelList.currentIndex(),float(self.cbb_linBtv.currentText()),self.cbb_linP.currentIndex()):
                     tslin_set_node_funtiontype(self.HwHandle,self.cbb_LINchannelList.currentIndex(),self.cbb_linType.currentIndex())
@@ -520,7 +580,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                 fifo_recv(MSGType.LINMSG,is_read=False)
             self.btn_FifoClearLINMsg.clicked.connect(clearLINMsgs)
 
-            # flexray API
+# flexray API
             self.ECU_Msgs = [None,None]
             self.ECUName = ['','']
             self.FRMSG = [[],[]]
@@ -549,7 +609,6 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                 item = self.tv_xmlList[idx].itemFromIndex(index)
                 row = index.row() if index.isValid() else -1
                 depth = 0
-                
                 parent = item.parent()
                 while parent is not None:
                     depth += 1
@@ -666,7 +725,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                     if self.ECU_Msgs[i] !=None:
                         tsflexray_stop_net(self.HwHandle,i,1000)
             self.btn_flexrayStopNet.clicked.connect(stop_flexray_net)
-
+            
     except:
         pass
             

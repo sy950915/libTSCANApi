@@ -126,10 +126,18 @@ class TSDB():
     def __Creat_Msg(self,_msg:int or str,AChannel = 0):
         if isinstance(_msg,int):
             if _msg in self.dbc_list_by_id:
-                return Message(channel=AChannel,arbitration_id=_msg,is_fd=self.dbc_list_by_id[_msg]._is_fd,is_extended_id=self.dbc_list_by_id[_msg]._is_extended_frame,dlc=DLC_DATA_BYTE_CNT(self.dbc_list_by_id[_msg]._length))
+                Fdlc=DLC_DATA_BYTE_CNT[self.dbc_list_by_id[_msg]._length]
+                DataList = []
+                for i in range(Fdlc):
+                    DataList.append(0)
+                return Message(channel=AChannel,arbitration_id=_msg,is_fd=self.dbc_list_by_id[_msg]._is_fd,is_extended_id=self.dbc_list_by_id[_msg]._is_extended_frame,dlc=Fdlc,data=DataList)
         elif isinstance(_msg,str):
             if _msg in self.dbc_list_by_name:
-                return Message(channel=AChannel,arbitration_id=_msg,is_fd=self.dbc_list_by_id[_msg]._is_fd,is_extended_id=self.dbc_list_by_name[_msg]._is_extended_frame,dlc=DLC_DATA_BYTE_CNT(self.dbc_list_by_name[_msg]._length))
+                Fdlc=DLC_DATA_BYTE_CNT[self.dbc_list_by_name[_msg]._length]
+                DataList = []
+                for i in range(Fdlc):
+                    DataList.append(0)
+                return Message(channel=AChannel,arbitration_id=self.dbc_list_by_name[_msg]._frame_id,is_fd=self.dbc_list_by_name[_msg]._is_fd,is_extended_id=self.dbc_list_by_name[_msg]._is_extended_frame,dlc=DLC_DATA_BYTE_CNT[self.dbc_list_by_name[_msg]._length],data=DataList)
         return None
     def set_signal_value(self, msg:TLIBCAN or TLIBCANFD or Message or int or str, signal_dict: dict,AChannel = 0):
         if isinstance(msg,int) or isinstance(msg,str): 
@@ -139,7 +147,8 @@ class TSDB():
         if msg ==None:
             print("MSG Type error")
         if msg.arbitration_id in self.dbc_list_by_id:
-            msg.dlc = self.dbc_list_by_id[msg.arbitration_id].length
+            if not isinstance(msg,Message):
+                msg.dlc = self.dbc_list_by_id[msg.arbitration_id].length
             return msg_convert_tosun(self.__change_signal_value(msg, signal_dict))
 
     def get_signal_value(self, msg, signalname):
