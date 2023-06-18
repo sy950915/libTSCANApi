@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-17 23:37:28
+LastEditTime: 2023-06-18 11:32:51
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -42,7 +42,12 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             self.setupUi(self)
             # self.cbb_BusMsgType.addItems(self.itmes)
             self.initUI()
-            self.startTime = time.perf_counter() 
+            self.can_tx_startTime = time.perf_counter() 
+            self.can_rx_startTime = time.perf_counter() 
+            self.lin_tx_startTime = time.perf_counter() 
+            self.lin_rx_startTime = time.perf_counter() 
+            self.flexray_tx_startTime = time.perf_counter() 
+            self.flexray_rx_startTime = time.perf_counter() 
             self.__refreshTime = 0.1
             self.CurrentPath = os.path.dirname(__file__)
         def tvAddRaw(self,Msg):
@@ -110,9 +115,10 @@ class MyWindows(QMainWindow, Ui_MainWindow):
 
             self.tv_xmlList = [self.treemodel,self.treemode2]
 
-            self.CANtreemode = QStandardItemModel(0, 2)
+            self.CANtreemode = QStandardItemModel(0, 3)
             self.CANtreemode.setHeaderData(0, Qt.Horizontal, "Name")
             self.CANtreemode.setHeaderData(1, Qt.Horizontal, "value")
+            self.CANtreemode.setHeaderData(2, Qt.Horizontal, "Cyclic")
             self.tv_canDB.setModel(self.CANtreemode)
             self.tv_canDB.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
@@ -349,18 +355,31 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             def On_CANFD_Event(ACANFD):
                 if not __is_start_viewMsg():
                     return
-                if time.perf_counter()-self.startTime>self.__refreshTime:
-                    self.startTime = time.perf_counter()
-                    if not ACANFD.contents.FProperties&0x80:
-                        addItem(ACANFD.contents)
+                if (ACANFD.contents.FProperties&1)==1:
+                    if time.perf_counter()-self.can_tx_startTime>self.__refreshTime:
+                        self.can_tx_startTime = time.perf_counter()
+                        if not ACANFD.contents.FProperties&0x80:
+                            addItem(ACANFD.contents)
+                else:
+                    if time.perf_counter()-self.can_rx_startTime>self.__refreshTime:
+                        self.can_rx_startTime = time.perf_counter()
+                        if not ACANFD.contents.FProperties&0x80:
+                            addItem(ACANFD.contents)
             def On_CAN_Event(ACAN):
                 if not __is_start_viewMsg():
                     return
-                if time.perf_counter()-self.startTime>self.__refreshTime:
-                    self.startTime = time.perf_counter()
-                    if not ACAN.contents.FProperties&0x80:
-                        addItem(ACAN.contents)
+                if (ACAN.contents.FProperties&1)==1:
+                    if time.perf_counter()-self.can_tx_startTime>self.__refreshTime:
+                        self.can_tx_startTime = time.perf_counter()
+                        if not ACAN.contents.FProperties&0x80:
+                            addItem(ACAN.contents)
+                else:
+                    if time.perf_counter()-self.can_rx_startTime>self.__refreshTime:
+                        self.can_rx_startTime = time.perf_counter()
+                        if not ACAN.contents.FProperties&0x80:
+                            addItem(ACAN.contents)
             ONCANFDEVENT = OnTx_RxFUNC_CANFD(On_CANFD_Event)
+
             def RegCANFDEvent():
                 tsapp_register_event_canfd(self.HwHandle,ONCANFDEVENT)
             self.btn_regCANFDCallBack.clicked.connect(RegCANFDEvent)
@@ -458,6 +477,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                                 for idx,signal in enumerate(self.CAN_Db.dbc_list_by_name[Name]._signals):
                                     Frame.setChild(idx,0,QStandardItem(QIcon(self.CurrentPath+"/icon/075.svg"),signal.name))
                                     Frame.setChild(idx,1,QStandardItem(str(signal.invalid if signal.invalid !=None else 0)))
+                                    Frame.setChild(idx,2,QStandardItem(str(self.CAN_Db.dbc_list_by_name[Name].cycle_time if self.CAN_Db.dbc_list_by_name[Name].cycle_time !=None else 0)))
                         else:
                             self.statusBar.showMessage(ret[1])
                     elif filetype =="xml(*.xml)":
@@ -560,9 +580,14 @@ class MyWindows(QMainWindow, Ui_MainWindow):
 
             def on_lin_event(ALIN):
                 if not __is_start_viewMsg(is_lin=True): return
-                if time.perf_counter()-self.startTime>self.__refreshTime:
-                    self.startTime = time.perf_counter()
-                    addItem(ALIN.contents)
+                if (ALIN.contents.FProperties&1)==1:
+                    if time.perf_counter()-self.lin_tx_startTime>self.__refreshTime:
+                        self.lin_tx_startTime = time.perf_counter()
+                        addItem(ALIN.contents)
+                else:
+                    if time.perf_counter()-self.lin_rx_startTime>self.__refreshTime:
+                        self.lin_rx_startTime = time.perf_counter()
+                        addItem(ALIN.contents)
             ONLIN = OnTx_RxFUNC_LIN(on_lin_event)
             def reg_linEvent():
                 tsapp_register_event_lin(self.HwHandle,ONLIN)
@@ -671,9 +696,14 @@ class MyWindows(QMainWindow, Ui_MainWindow):
 
             def on_flexray_event(AFlexray):
                 if not __is_start_viewMsg(is_flexray=True): return
-                if time.perf_counter()-self.startTime>self.__refreshTime:
-                    self.startTime = time.perf_counter()
-                    addItem(AFlexray.contents)
+                if AFlexray.contents.FDir == 1:
+                    if time.perf_counter()-self.flexray_tx_startTime>self.__refreshTime:
+                        self.flexray_tx_startTime = time.perf_counter()
+                        addItem(AFlexray.contents)
+                else:
+                    if time.perf_counter()-self.flexray_rx_startTime>self.__refreshTime:
+                        self.flexray_rx_startTime = time.perf_counter()
+                        addItem(AFlexray.contents)
             ONFlexRay = OnTx_RxFUNC_Flexray(on_flexray_event)
 
             def reg_flexrayEvent():

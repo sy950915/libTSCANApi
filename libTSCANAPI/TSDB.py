@@ -126,18 +126,18 @@ class TSDB():
     def __Creat_Msg(self,_msg:int or str,AChannel = 0):
         if isinstance(_msg,int):
             if _msg in self.dbc_list_by_id:
-                Fdlc=DLC_DATA_BYTE_CNT[self.dbc_list_by_id[_msg]._length]
+                Fdlc=self.dbc_list_by_id[_msg]._length
                 DataList = []
                 for i in range(Fdlc):
                     DataList.append(0)
                 return Message(channel=AChannel,arbitration_id=_msg,is_fd=self.dbc_list_by_id[_msg]._is_fd,is_extended_id=self.dbc_list_by_id[_msg]._is_extended_frame,dlc=Fdlc,data=DataList)
         elif isinstance(_msg,str):
             if _msg in self.dbc_list_by_name:
-                Fdlc=DLC_DATA_BYTE_CNT[self.dbc_list_by_name[_msg]._length]
+                Fdlc=self.dbc_list_by_name[_msg]._length
                 DataList = []
                 for i in range(Fdlc):
                     DataList.append(0)
-                return Message(channel=AChannel,arbitration_id=self.dbc_list_by_name[_msg]._frame_id,is_fd=self.dbc_list_by_name[_msg]._is_fd,is_extended_id=self.dbc_list_by_name[_msg]._is_extended_frame,dlc=DLC_DATA_BYTE_CNT[self.dbc_list_by_name[_msg]._length],data=DataList)
+                return Message(channel=AChannel,arbitration_id=self.dbc_list_by_name[_msg]._frame_id,is_fd=self.dbc_list_by_name[_msg]._is_fd,is_extended_id=self.dbc_list_by_name[_msg]._is_extended_frame,dlc=Fdlc,data=DataList)
         return None
     def set_signal_value(self, msg:TLIBCAN or TLIBCANFD or Message or int or str, signal_dict: dict,AChannel = 0):
         if isinstance(msg,int) or isinstance(msg,str): 
