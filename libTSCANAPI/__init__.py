@@ -35,10 +35,10 @@ try :
     if os.path.isfile(current_dbc_path):
         import cantools
         cantools_path = os.path.dirname(cantools.__file__)
-        dbc_path = os.path.join(cantools_path, 'database/can/formats')
-        shutil.move(libtosun_path,dbc_path)
-except:
-    pass
+        dbc_path = os.path.join(cantools_path, 'database/can/formats/dbc.py')
+        shutil.move(current_dbc_path,dbc_path)
+except Exception as e:
+    print(e)
 initialize_lib_tscan(True,True,False)
 
 def close():
