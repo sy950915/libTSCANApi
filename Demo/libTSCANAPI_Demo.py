@@ -66,7 +66,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             else:
                 ID = f"0x{Msg.FIdentifier:03x}"
             if isinstance(Msg,TLIBFlexray):
-                DLC = Msg.FActualPayloadLength
+                DLC = str(Msg.FActualPayloadLength)
                 Dir = 'TX' if (Msg.FDir & 1) == 1 else 'RX'
                 DataLen = DLC
             else:
