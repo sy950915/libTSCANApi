@@ -1,7 +1,7 @@
 import os
 import shutil
 import sys
-from .TSCommon import _os,_curr_path
+from .TSCommon import _os,_curr_path,_arch
 from .TSCommon import *
 from .TSMasterDevice import *
 from .TSDB import *
@@ -44,9 +44,14 @@ initialize_lib_tscan(True,True,False)
 def close():
     tsapp_disconnect_all()
     finalize_lib_tscan()
-    if os.path.exists('./libTSH.so'):
+    if os.path.isfile('./libTSH.so'):
         os.remove("./libTSH.so")
-    elif os.path.exists('./libTSH.dll'):
-        os.remove("./libTSH.dll")
-
+    elif os.path.isfile('./libTSH.dll'):
+        try:
+            os.remove("./libTSH.dll")
+            if _arch == '32bit':
+                os.remove('./libLog.dll')
+                os.remove('./binlog.dll')
+        except:
+            pass
 atexit.register(close)
