@@ -7,7 +7,7 @@ LastEditTime: 2023-06-14 16:48:53
 
 from .TSStructure import *  
 from .TSEnumdefine import * 
-from .TSDirver import _os,dll,_curr_path
+from .TSDirver import _os,dll,_curr_path,_arch
 from ctypes import *
 # Common Functions
 
