@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 11:59:15
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-14 16:48:53
+LastEditTime: 2023-06-26 22:48:16
 '''
 
 from .TSStructure import *  
@@ -629,6 +629,12 @@ tsapp_register_pretx_event_can.argtypes = [size_t,OnTx_RxFUNC_CAN]
 tsapp_register_pretx_event_can.restype = TS_ReturnType
 tsapp_register_pretx_event_can.errcheck = check_status_operation
 
+
+tsapp_register_pretx_event_can_whandle = dll.tscan_register_pretx_event_can_whandle
+tsapp_register_pretx_event_can_whandle.argtypes = [size_t,OnTx_RxFUNC_CAN_WHandle]  
+tsapp_register_pretx_event_can_whandle.restype = TS_ReturnType
+tsapp_register_pretx_event_can_whandle.errcheck = check_status_operation
+
 # 注销预发送事件
 """
     unregister pre tx can event
@@ -651,6 +657,11 @@ tsapp_unregister_pretx_event_can = dll.tscan_unregister_pretx_event_can
 tsapp_unregister_pretx_event_can.argtypes = [size_t,OnTx_RxFUNC_CAN]  
 tsapp_unregister_pretx_event_can.restype = TS_ReturnType
 tsapp_unregister_pretx_event_can.errcheck = check_status_operation
+
+tsapp_unregister_pretx_event_can_whandle = dll.tscan_unregister_pretx_event_can_whandle
+tsapp_unregister_pretx_event_can_whandle.argtypes = [size_t,OnTx_RxFUNC_CAN_WHandle]  
+tsapp_unregister_pretx_event_can_whandle.restype = TS_ReturnType
+tsapp_unregister_pretx_event_can_whandle.errcheck = check_status_operation
 
 # 注册rx_tx事件
 """
@@ -675,6 +686,10 @@ tsapp_register_event_can.argtypes = [size_t,OnTx_RxFUNC_CAN]
 tsapp_register_event_can.restype = TS_ReturnType
 tsapp_register_event_can.errcheck = check_status_operation
 
+tsapp_register_event_can_whandle = dll.tscan_register_event_can_whandle
+tsapp_register_event_can_whandle.argtypes = [size_t,OnTx_RxFUNC_CAN_WHandle]  
+tsapp_register_event_can_whandle.restype = TS_ReturnType
+tsapp_register_event_can_whandle.errcheck = check_status_operation
 # 注销rx_tx事件
 """
     unregister canfd event
@@ -697,6 +712,10 @@ tsapp_unregister_event_can.argtypes = [size_t,OnTx_RxFUNC_CAN]
 tsapp_unregister_event_can.restype = TS_ReturnType
 tsapp_unregister_event_can.errcheck = check_status_operation
 
+tsapp_unregister_event_can_whandle = dll.tscan_unregister_event_can_whandle
+tsapp_unregister_event_can_whandle.argtypes = [size_t,OnTx_RxFUNC_CAN_WHandle]  
+tsapp_unregister_event_can_whandle.restype = TS_ReturnType
+tsapp_unregister_event_can_whandle.errcheck = check_status_operation
 
 # 接收canfd 报文
 """
@@ -835,6 +854,11 @@ tsapp_register_pretx_event_canfd.argtypes = [size_t,OnTx_RxFUNC_CANFD]
 tsapp_register_pretx_event_canfd.restype = TS_ReturnType
 tsapp_register_pretx_event_canfd.errcheck = check_status_operation
 
+tsapp_register_pretx_event_canfd_whandle = dll.tscan_register_pretx_event_canfd_whandle
+tsapp_register_pretx_event_canfd_whandle.argtypes = [size_t,OnTx_RxFUNC_CANFD_WHandle]  
+tsapp_register_pretx_event_canfd_whandle.restype = TS_ReturnType
+tsapp_register_pretx_event_canfd_whandle.errcheck = check_status_operation
+
 # 注销预发送事件
 """
     unregister pre tx can event
@@ -857,6 +881,11 @@ tsapp_unregister_pretx_event_canfd = dll.tscan_unregister_pretx_event_canfd
 tsapp_unregister_pretx_event_canfd.argtypes = [size_t,OnTx_RxFUNC_CANFD]  
 tsapp_unregister_pretx_event_canfd.restype = TS_ReturnType
 tsapp_unregister_pretx_event_canfd.errcheck = check_status_operation
+
+tsapp_unregister_pretx_event_canfd_whandle = dll.tscan_unregister_pretx_event_canfd_whandle
+tsapp_unregister_pretx_event_canfd_whandle.argtypes = [size_t,OnTx_RxFUNC_CANFD_WHandle]  
+tsapp_unregister_pretx_event_canfd_whandle.restype = TS_ReturnType
+tsapp_unregister_pretx_event_canfd_whandle.errcheck = check_status_operation
 
 # 注册rx_tx事件
 """
@@ -881,6 +910,10 @@ tsapp_register_event_canfd.argtypes = [size_t,OnTx_RxFUNC_CANFD]
 tsapp_register_event_canfd.restype = TS_ReturnType
 tsapp_register_event_canfd.errcheck = check_status_operation
 
+tsapp_register_event_canfd_whandle = dll.tscan_register_event_canfd_whandle
+tsapp_register_event_canfd_whandle.argtypes = [size_t,OnTx_RxFUNC_CANFD_WHandle]  
+tsapp_register_event_canfd_whandle.restype = TS_ReturnType
+tsapp_register_event_canfd_whandle.errcheck = check_status_operation
 # 注销rx_tx事件
 """
     unregister canfd event
@@ -902,6 +935,11 @@ tsapp_unregister_event_canfd = dll.tscan_unregister_event_canfd
 tsapp_unregister_event_canfd.argtypes = [size_t,OnTx_RxFUNC_CANFD]  
 tsapp_unregister_event_canfd.restype = TS_ReturnType
 tsapp_unregister_event_canfd.errcheck = check_status_operation
+
+tsapp_unregister_event_canfd_whandle = dll.tscan_unregister_event_canfd_whandle
+tsapp_unregister_event_canfd_whandle.argtypes = [size_t,OnTx_RxFUNC_CANFD_WHandle]  
+tsapp_unregister_event_canfd_whandle.restype = TS_ReturnType
+tsapp_unregister_event_canfd_whandle.errcheck = check_status_operation
 
 # LIN API
 # LIN 发送报文
@@ -1082,6 +1120,11 @@ tsapp_register_pretx_event_lin.argtypes = [size_t,OnTx_RxFUNC_LIN]
 tsapp_register_pretx_event_lin.restype = TS_ReturnType
 tsapp_register_pretx_event_lin.errcheck = check_status_operation
 
+tsapp_register_pretx_event_lin_whandle = dll.tslin_register_pretx_event_lin_whandle
+tsapp_register_pretx_event_lin_whandle.argtypes = [size_t,OnTx_RxFUNC_LIN_WHandle]  
+tsapp_register_pretx_event_lin_whandle.restype = TS_ReturnType
+tsapp_register_pretx_event_lin_whandle.errcheck = check_status_operation
+
 # 注销预发送事件
 """
     unregister pre tx can event
@@ -1104,6 +1147,11 @@ tsapp_unregister_pretx_event_lin = dll.tslin_unregister_pretx_event_lin
 tsapp_unregister_pretx_event_lin.argtypes = [size_t,OnTx_RxFUNC_LIN]  
 tsapp_unregister_pretx_event_lin.restype = TS_ReturnType
 tsapp_unregister_pretx_event_lin.errcheck = check_status_operation
+
+tsapp_unregister_pretx_event_lin_whandle = dll.tslin_unregister_pretx_event_lin_whandle
+tsapp_unregister_pretx_event_lin_whandle.argtypes = [size_t,OnTx_RxFUNC_LIN_WHandle]  
+tsapp_unregister_pretx_event_lin_whandle.restype = TS_ReturnType
+tsapp_unregister_pretx_event_lin_whandle.errcheck = check_status_operation
 
 # 注册rx_tx事件
 """
@@ -1128,6 +1176,11 @@ tsapp_register_event_lin.argtypes = [size_t,OnTx_RxFUNC_LIN]
 tsapp_register_event_lin.restype = TS_ReturnType
 tsapp_register_event_lin.errcheck = check_status_operation
 
+tsapp_register_event_lin_whandle = dll.tslin_register_event_lin_whandle
+tsapp_register_event_lin_whandle.argtypes = [size_t,OnTx_RxFUNC_LIN_WHandle]  
+tsapp_register_event_lin_whandle.restype = TS_ReturnType
+tsapp_register_event_lin_whandle.errcheck = check_status_operation
+
 # 注销rx_tx事件
 """
     unregister canfd event
@@ -1149,6 +1202,11 @@ tsapp_unregister_event_lin = dll.tslin_unregister_event_lin
 tsapp_unregister_event_lin.argtypes = [size_t,OnTx_RxFUNC_LIN]  
 tsapp_unregister_event_lin.restype = TS_ReturnType
 tsapp_unregister_event_lin.errcheck = check_status_operation
+
+tsapp_unregister_event_lin_whandle = dll.tslin_unregister_event_lin_whandle
+tsapp_unregister_event_lin_whandle.argtypes = [size_t,OnTx_RxFUNC_LIN_WHandle]  
+tsapp_unregister_event_lin_whandle.restype = TS_ReturnType
+tsapp_unregister_event_lin_whandle.errcheck = check_status_operation
 
 # flexray API
 
@@ -1429,6 +1487,11 @@ tsapp_register_pretx_event_flexray.argtypes = [size_t,OnTx_RxFUNC_Flexray]
 tsapp_register_pretx_event_flexray.restype = TS_ReturnType
 tsapp_register_pretx_event_flexray.errcheck = check_status_operation
 
+tsapp_register_pretx_event_flexray_whandle = dll.tsflexray_register_pretx_event_flexray_whandle
+tsapp_register_pretx_event_flexray_whandle.argtypes = [size_t,OnTx_RxFUNC_Flexray_WHandle]  
+tsapp_register_pretx_event_flexray_whandle.restype = TS_ReturnType
+tsapp_register_pretx_event_flexray_whandle.errcheck = check_status_operation
+
 # 注销预发送事件
 """
     unregister pre tx can event
@@ -1451,6 +1514,11 @@ tsapp_unregister_pretx_event_flexray = dll.tsflexray_unregister_pretx_event_flex
 tsapp_unregister_pretx_event_flexray.argtypes = [size_t,OnTx_RxFUNC_Flexray]  
 tsapp_unregister_pretx_event_flexray.restype = TS_ReturnType
 tsapp_unregister_pretx_event_flexray.errcheck = check_status_operation
+
+tsapp_unregister_pretx_event_flexray_whandle = dll.tsflexray_unregister_pretx_event_flexray_whandle 
+tsapp_unregister_pretx_event_flexray_whandle .argtypes = [size_t,OnTx_RxFUNC_Flexray_WHandle]  
+tsapp_unregister_pretx_event_flexray_whandle .restype = TS_ReturnType
+tsapp_unregister_pretx_event_flexray_whandle .errcheck = check_status_operation
 
 # 注册rx_tx事件
 """
@@ -1475,6 +1543,11 @@ tsapp_register_event_flexray.argtypes = [size_t,OnTx_RxFUNC_Flexray]
 tsapp_register_event_flexray.restype = TS_ReturnType
 tsapp_register_event_flexray.errcheck = check_status_operation
 
+tsapp_register_event_flexray_whandle = dll.tsflexray_register_event_flexray_whandle
+tsapp_register_event_flexray_whandle.argtypes = [size_t,OnTx_RxFUNC_Flexray_WHandle]  
+tsapp_register_event_flexray_whandle.restype = TS_ReturnType
+tsapp_register_event_flexray_whandle.errcheck = check_status_operation
+
 # 注销rx_tx事件
 """
     unregister canfd event
@@ -1496,6 +1569,22 @@ tsapp_unregister_event_flexray = dll.tsflexray_unregister_event_flexray
 tsapp_unregister_event_flexray.argtypes = [size_t,OnTx_RxFUNC_Flexray]  
 tsapp_unregister_event_flexray.restype = TS_ReturnType
 tsapp_unregister_event_flexray.errcheck = check_status_operation
+
+tsapp_unregister_event_flexray_whandle = dll.tsflexray_unregister_event_flexray_whandle
+tsapp_unregister_event_flexray_whandle.argtypes = [size_t,OnTx_RxFUNC_Flexray_WHandle]  
+tsapp_unregister_event_flexray_whandle.restype = TS_ReturnType
+tsapp_unregister_event_flexray_whandle.errcheck = check_status_operation
+
+tsfifo_add_flexray_pass_filter = dll.tsfifo_add_flexray_pass_filter
+tsfifo_add_flexray_pass_filter.argtypes = [size_t,s32,u16,u8,u8]  
+tsfifo_add_flexray_pass_filter.restype = TS_ReturnType
+tsfifo_add_flexray_pass_filter.errcheck = check_status_operation
+
+tsfifo_delete_flexray_pass_filter = dll.tsfifo_delete_flexray_pass_filter
+tsfifo_delete_flexray_pass_filter.argtypes = [size_t,s32,u16,u8,u8]  
+tsfifo_delete_flexray_pass_filter.restype = TS_ReturnType
+tsfifo_delete_flexray_pass_filter.errcheck = check_status_operation
+
 
 
 # only windows supported now
@@ -1829,6 +1918,6 @@ if 'windows' in _os.lower():
     tsdiag_lin_fault_memory_read.argtypes = [s32,u8,u8,s32]
     tsdiag_lin_fault_memory_read.restype = TS_ReturnType
     tsdiag_lin_fault_memory_read.errcheck = check_status_operation
-
+    
 
     

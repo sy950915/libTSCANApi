@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-18 11:32:51
+LastEditTime: 2023-06-26 22:54:32
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -68,7 +68,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             if isinstance(Msg,TLIBFlexray):
                 DLC = str(Msg.FActualPayloadLength)
                 Dir = 'TX' if (Msg.FDir & 1) == 1 else 'RX'
-                DataLen = DLC
+                DataLen = Msg.FActualPayloadLength
             else:
                 DLC = str(Msg.FDLC)
                 Dir = 'TX' if (Msg.FProperties & 1) == 1 else 'RX'
@@ -95,7 +95,6 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                     QStandardItem(DLC),
                     QStandardItem(Data)
                             ]
-
         def initUI(self):
             self.model = QStandardItemModel(0, 7)
             self.model.setHorizontalHeaderLabels(['times', 'CHN','ID', 'Type','Dir','DLC','Data'])
@@ -352,7 +351,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                     return False
                 else: return False
             # on msg event
-            def On_CANFD_Event(ACANFD):
+            def On_CANFD_Event(obj,ACANFD):
                 if not __is_start_viewMsg():
                     return
                 if (ACANFD.contents.FProperties&1)==1:
@@ -365,7 +364,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                         self.can_rx_startTime = time.perf_counter()
                         if not ACANFD.contents.FProperties&0x80:
                             addItem(ACANFD.contents)
-            def On_CAN_Event(ACAN):
+            def On_CAN_Event(obj,ACAN):
                 if not __is_start_viewMsg():
                     return
                 if (ACAN.contents.FProperties&1)==1:
@@ -378,23 +377,23 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                         self.can_rx_startTime = time.perf_counter()
                         if not ACAN.contents.FProperties&0x80:
                             addItem(ACAN.contents)
-            ONCANFDEVENT = OnTx_RxFUNC_CANFD(On_CANFD_Event)
+            ONCANFDEVENT = OnTx_RxFUNC_CANFD_WHandle(On_CANFD_Event)
 
             def RegCANFDEvent():
-                tsapp_register_event_canfd(self.HwHandle,ONCANFDEVENT)
+                tsapp_register_event_canfd_whandle(self.HwHandle,ONCANFDEVENT)
             self.btn_regCANFDCallBack.clicked.connect(RegCANFDEvent)
 
             def UnRegCANFDEvent():
-                tsapp_unregister_event_canfd(self.HwHandle,ONCANFDEVENT)
+                tsapp_unregister_event_canfd_whandle(self.HwHandle,ONCANFDEVENT)
             self.btn_unregCANFDCallBack.clicked.connect(UnRegCANFDEvent)
             
-            ONCANEVENT = OnTx_RxFUNC_CAN(On_CAN_Event)
+            ONCANEVENT = OnTx_RxFUNC_CAN_WHandle(On_CAN_Event)
             def RegCANEvent():
-                tsapp_register_event_can(self.HwHandle,ONCANEVENT)
+                tsapp_register_event_can_whandle(self.HwHandle,ONCANEVENT)
             self.btn_regCANCallBack.clicked.connect(RegCANEvent)
             
             def UnRegCANEvent():
-                tsapp_unregister_event_can(self.HwHandle,ONCANEVENT)
+                tsapp_unregister_event_can_whandle(self.HwHandle,ONCANEVENT)
             self.btn_unregCANCallBack.clicked.connect(UnRegCANEvent)
 
             def fifo_recv(MsgType:MSGType,Chnidx:s32=0,includeTx:bool = False,is_read:bool =True):
@@ -578,7 +577,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                 __SendMsg(__CreateMsg(True),is_asnyc=False)
             self.btn_SyncSendLINMsg.clicked.connect(sync_sendLinMsg)
 
-            def on_lin_event(ALIN):
+            def on_lin_event(obj,ALIN):
                 if not __is_start_viewMsg(is_lin=True): return
                 if (ALIN.contents.FProperties&1)==1:
                     if time.perf_counter()-self.lin_tx_startTime>self.__refreshTime:
@@ -588,9 +587,9 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                     if time.perf_counter()-self.lin_rx_startTime>self.__refreshTime:
                         self.lin_rx_startTime = time.perf_counter()
                         addItem(ALIN.contents)
-            ONLIN = OnTx_RxFUNC_LIN(on_lin_event)
+            ONLIN = OnTx_RxFUNC_LIN_WHandle(on_lin_event)
             def reg_linEvent():
-                tsapp_register_event_lin(self.HwHandle,ONLIN)
+                tsapp_register_event_lin_whandle(self.HwHandle,ONLIN)
             self.btn_regLINCallBack.clicked.connect(reg_linEvent)
             def unreg_linEvent():
                 tsapp_unregister_event_lin(self.HwHandle,ONLIN)
@@ -694,7 +693,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                 __SendMsg(__CreateMsg(is_flexray=True),is_asnyc=False)
             self.btn_SyncSendflexrayMsg.clicked.connect(sync_sendFlexrayMsg)
 
-            def on_flexray_event(AFlexray):
+            def on_flexray_event(obj,AFlexray):
                 if not __is_start_viewMsg(is_flexray=True): return
                 if AFlexray.contents.FDir == 1:
                     if time.perf_counter()-self.flexray_tx_startTime>self.__refreshTime:
@@ -704,18 +703,19 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                     if time.perf_counter()-self.flexray_rx_startTime>self.__refreshTime:
                         self.flexray_rx_startTime = time.perf_counter()
                         addItem(AFlexray.contents)
-            ONFlexRay = OnTx_RxFUNC_Flexray(on_flexray_event)
+            ONFlexRay = OnTx_RxFUNC_Flexray_WHandle(on_flexray_event)
 
             def reg_flexrayEvent():
-                tsapp_register_event_flexray(self.HwHandle,ONFlexRay)
+                tsapp_register_event_flexray_whandle(self.HwHandle,ONFlexRay)
             self.btn_regflexrayCallBack.clicked.connect(reg_flexrayEvent)
 
             def unreg_flexrayEvent():
-                tsapp_unregister_event_flexray(self.HwHandle,ONFlexRay)
+                tsapp_unregister_event_flexray_whandle(self.HwHandle,ONFlexRay)
             self.btn_unregflexrayCallBack.clicked.connect(unreg_flexrayEvent)
 
             def recvFlexrayMsgs():
-                fifo_recv(MSGType.FlexrayMSG)
+                # fifo_recv(MSGType.FlexrayMSG)
+                tsfifo_add_flexray_pass_filter(self.HwHandle,0,16,0,2)
             self.btn_FifoRecvflexrayRxMsg.clicked.connect(recvFlexrayMsgs)
 
             def recvFlexrayTxRxMsgs():
