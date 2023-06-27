@@ -1509,7 +1509,6 @@ def _load_messages(tokens,
         """Get attributes for given message.
 
         """
-
         try:
             return attributes[frame_id_dbc]['message']
         except KeyError:
@@ -1529,7 +1528,6 @@ def _load_messages(tokens,
         """Get send type for a given message.
 
         """
-
         result = None
         message_attributes = get_attributes(frame_id_dbc)
 
@@ -1550,22 +1548,30 @@ def _load_messages(tokens,
     
     def get_message_type(frame_id_dbc):
         """Get type for a given message."""
-
-        message_attributes = get_attributes(frame_id_dbc)
-
         try:
-            frame_format = message_attributes['VFrameFormat'].value
-            # frame_format = definitions['VFrameFormat'].choices[frame_format]
-        except (KeyError, TypeError):
+            message_attributes = get_attributes(frame_id_dbc)
             try:
-                frame_format = definitions['VFrameFormat'].default_value
+                frame_format = message_attributes['VFrameFormat'].value
+                # frame_format = definitions['VFrameFormat'].choices[frame_format]
             except (KeyError, TypeError):
-                frame_format = None
-
-        if frame_format > 13:
-            return True
-        else:
-            return False
+                try:
+                    frame_format = definitions['VFrameFormat'].default_value
+                except (KeyError, TypeError):
+                    frame_format = None
+            try:
+                if isinstance(frame_format,int):
+                    if frame_format > 13:
+                        return True
+                    return False
+                elif isinstance(frame_format,str):
+                    if frame_format.upper().find("FD"):
+                        return True
+                    return False
+                return False
+            except:
+                return False
+        except:
+                return False
 
     def get_cycle_time(frame_id_dbc):
         """Get cycle time for a given message.

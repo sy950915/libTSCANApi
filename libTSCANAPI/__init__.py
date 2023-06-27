@@ -30,13 +30,13 @@ try :
             new_str = old_str + '\n"libtosun":("can.interfaces.libtosun","libtosunBus"),'
             updateFile(os.path.join(can_path, 'interfaces/__init__.py'),old_str,new_str)
             shutil.move(libtosun_path,os.path.join(can_path, 'interfaces'))
-    
-    current_dbc_path = os.path.join(_curr_path, 'dbc.py')
-    if os.path.isfile(current_dbc_path):
-        import cantools
-        cantools_path = os.path.dirname(cantools.__file__)
-        dbc_path = os.path.join(cantools_path, 'database/can/formats/dbc.py')
-        shutil.move(current_dbc_path,dbc_path)
+    if IS_ADD_CANTOOLS:
+        current_dbc_path = os.path.join(_curr_path, 'dbc.py')
+        if os.path.isfile(current_dbc_path):
+            import cantools
+            cantools_path = os.path.dirname(cantools.__file__)
+            dbc_path = os.path.join(cantools_path, 'database/can/formats/dbc.py')
+            shutil.move(current_dbc_path,dbc_path)
 except Exception as e:
     print(e)
 initialize_lib_tscan(True,True,False)

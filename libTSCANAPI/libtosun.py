@@ -38,5 +38,5 @@ class libtosunBus(can.BusABC):
 
     def shutdown(self) -> None:
         LOG.debug('TSMaster - shutdown.')
+        self.device.shut_down()
         super().shutdown()
-        finalize_lib_tscan()

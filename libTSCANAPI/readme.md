@@ -11,7 +11,10 @@
 
 注意：IS_ADD_PYTHON_CAN = True后需要调用本库运行一次，将配置文件写入到python-can中，之后就可以直接使用，不需要再做此配置
 
-使用TSDB.py库时需注意：本库在开始运行时，会将dbc.py文件直接剪切至cantools库中进行替换（原因是cantools解析dbc时没有判断报文类型，因此在原基础上，本库下的dbc.py增加了一个函数进行识别报文为can 还是canfd报文）
+
+如果需要使用本库中依据TSDB类中依据数据库自动创建 CAN报文或者CANFD报文 需要将IS_ADD_CANTOOLS置为True
+当 IS_ADD_CANTOOLS置为True后：
+    使用TSDB.py库时需注意：本库在开始运行时，会将dbc.py文件直接剪切至cantools库中进行替换（原因是cantools解析dbc时没有判断报文类型，因此在原基础上，本库下的dbc.py增加了一个函数进行识别报文为can 还是canfd报文）
 
 2023.06.26新增函数：
 tsapp_register_pretx_event_can_whandle 

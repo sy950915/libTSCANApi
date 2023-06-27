@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-11 13:29:24
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-11 15:26:53
+LastEditTime: 2023-06-27 14:38:55
 '''
 import queue
 import time
@@ -11,12 +11,12 @@ import typing
 from .TSDB import *
 from .TSCommon import *
 class TSMasterDevice():
-    HwHandle = size_t(0)
-    configs = {}
-    __hw_isconnect = False
-    include_own_message = False
-    __include_error_message = False
-    msg_list = queue.Queue(maxsize=100000)
+    # HwHandle = size_t(0)
+    # configs = {}
+    # __hw_isconnect = False
+    # include_own_message = False
+    # __include_error_message = False
+    # msg_list = queue.Queue(maxsize=100000)
     error_code = {1: "Index out of range",
                 2: "Connect failed",
                 3: "Device not found",
@@ -229,13 +229,12 @@ class TSMasterDevice():
                 211: "Slave node transmit frames error",
                 212: "Slave node receive frames error",
                 }
-    db = None
-    onRXTX_EVENT = OnTx_RxFUNC_CANFD()
-    start_receive = False
     def __init__(self, configs: typing.List[dict], hwserial: bytes = b'',
                 is_include_tx: bool = False,
                 dbc: bytes = b'',
                 filters:typing.List[dict]=[]):
+        self.HwHandle = size_t(0)
+        self.__hw_isconnect = False
         self.filters = filters
         self.include_own_message = is_include_tx
         self.configs = configs
@@ -278,7 +277,6 @@ class TSMasterDevice():
     def unload_dbc_all(self):
         self.db.dbc_list_by_id.clear()
         self.db.dbc_list_by_name.clear()
-        self.db.dbc_signal_list.clear()
     def set_singal_value(self, msg, singaldict:dict):
         return self.db.set_signal_value(msg, singaldict)
     def get_signal_value(self, msg, signal_name):
@@ -327,34 +325,34 @@ class TSMasterDevice():
         return None
         # return self.msg_list.get() if not self.msg_list.empty() else None
 
-    def on_tx_rx_event(self, ACAN):
-        if self.start_receive:
-            msg_channel = self.filter.get('msg_channel',None)
-            msg_id = self.filter.get('msg_id',None)
-            # pass_no = self.filter.get('pass',True)
-            if msg_channel != None and ACAN.contents.FIdxChn != msg_channel:
-                return
-            if msg_id != None and ACAN.contents.FIdentifier != msg_id:
-                return
-            if ACAN.contents.FProperties == 0x80:
-                msg = Message(timestamp= float(ACAN.contents.FTimeUs) / 1000000,
-                            arbitration_id=0xFFFFFFFF,
-                            is_error_frame=True, data=[0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])
-                if self.__include_error_message:
-                    if self.msg_list.full():
-                        self.msg_list.get()
-                    self.msg_list.put(msg)
-            elif ACAN.contents.FProperties & 1 == 1:
-                if self.include_own_message:
-                    msg = tosun_convert_msg(ACAN.contents)
-                    if self.msg_list.full():
-                        self.msg_list.get()
-                    self.msg_list.put(msg)
-            else:
-                msg = tosun_convert_msg(ACAN.contents)
-                if self.msg_list.full():
-                    self.msg_list.get()
-                self.msg_list.put(msg)
+    # def on_tx_rx_event(self, ACAN):
+    #     if self.start_receive:
+    #         msg_channel = self.filter.get('msg_channel',None)
+    #         msg_id = self.filter.get('msg_id',None)
+    #         # pass_no = self.filter.get('pass',True)
+    #         if msg_channel != None and ACAN.contents.FIdxChn != msg_channel:
+    #             return
+    #         if msg_id != None and ACAN.contents.FIdentifier != msg_id:
+    #             return
+    #         if ACAN.contents.FProperties == 0x80:
+    #             msg = Message(timestamp= float(ACAN.contents.FTimeUs) / 1000000,
+    #                         arbitration_id=0xFFFFFFFF,
+    #                         is_error_frame=True, data=[0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])
+    #             if self.__include_error_message:
+    #                 if self.msg_list.full():
+    #                     self.msg_list.get()
+    #                 self.msg_list.put(msg)
+    #         elif ACAN.contents.FProperties & 1 == 1:
+    #             if self.include_own_message:
+    #                 msg = tosun_convert_msg(ACAN.contents)
+    #                 if self.msg_list.full():
+    #                     self.msg_list.get()
+    #                 self.msg_list.put(msg)
+    #         else:
+    #             msg = tosun_convert_msg(ACAN.contents)
+    #             if self.msg_list.full():
+    #                 self.msg_list.get()
+    #             self.msg_list.put(msg)
 
     def tsdiag_can_create(self, pDiagModuleIndex: c_int32, AChnIndex: CHANNEL_INDEX, ASupportFDCAN: u8,
                         AMaxDLC: u8,
