@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-11 13:29:24
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-27 14:38:55
+LastEditTime: 2023-06-28 11:49:47
 '''
 import queue
 import time
@@ -233,6 +233,7 @@ class TSMasterDevice():
                 is_include_tx: bool = False,
                 dbc: bytes = b'',
                 filters:typing.List[dict]=[]):
+        initialize_lib_tscan(True,True,False)
         self.HwHandle = size_t(0)
         self.__hw_isconnect = False
         self.filters = filters
@@ -392,4 +393,3 @@ class TSMasterDevice():
 
     def shut_down(self):
         tsapp_disconnect_by_handle(self.HwHandle)
-        self.msg_list.queue.clear()
