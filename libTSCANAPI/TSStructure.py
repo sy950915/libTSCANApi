@@ -378,6 +378,91 @@ class TLibFlexray_controller_config(Structure):
                 # bit5: 1：chb桥接使能    0：不使能
                 # bit6: 1:not ignore NULL Frame  0: ignore NULL Frame
                 ]
+    def __init__(self, is_open_a=True, is_open_b=True, wakeup_chn=0, enable100_a=True, enable100_b=True,
+                 is_show_nullframe=True, is_Bridging=False):
+        '''
+        is_open :是否打开通道
+        wakeup_chn:唤醒通道 0:通道A ,1:通道B
+        enable100: 使能通道 100欧终端电阻
+        is_show_nullframe:是否显示空针
+        '''
+        self.NETWORK_MANAGEMENT_VECTOR_LENGTH = 8
+        self.PAYLOAD_LENGTH_STATIC = 16
+        self.LATEST_TX = 124
+        self.T_S_S_TRANSMITTER = 9
+        self.CAS_RX_LOW_MAX = 87
+        self.SPEED = 0
+        self.WAKE_UP_SYMBOL_RX_WINDOW = 301
+        # ecu
+        self.WAKE_UP_PATTERN = 43
+        
+        self.WAKE_UP_SYMBOL_RX_IDLE = 59
+        self.WAKE_UP_SYMBOL_RX_LOW = 55
+        self.WAKE_UP_SYMBOL_TX_IDLE = 180
+        self.WAKE_UP_SYMBOL_TX_LOW = 60
+        self.channelAConnectedNode = 0
+        if is_open_a:
+            self.channelAConnectedNode = 1  # 是否启用通道A,0不启动，1启动
+        self.channelBConnectedNode = 0  # 是否启用通道B,0不启动，1启动
+        if is_open_b:
+            self.channelAConnectedNode = 1
+        self.channelASymbolTransmitted = 1  # 是否启用通道A的符号传输功能,0不启动，1启动
+        self.channelBSymbolTransmitted = 1  # 是否启用通道B的符号传输功能,0不启动，1启动
+        self.ALLOW_HALT_DUE_TO_CLOCK = 1
+        self.SINGLE_SLOT_ENABLED = 0  # FALSE_0, TRUE_1
+        self.wake_up_idx = wakeup_chn  # 唤醒通道选择， 0_通道A， 1 通道B
+        self.ALLOW_PASSIVE_TO_ACTIVE = 2
+        self.COLD_START_ATTEMPTS = 10
+        self.synchFrameTransmitted = 1  # 本节点是否需要发送同步报文
+        self.startupFrameTransmitted = 1  # 本节点是否需要发送启动报文
+        self.LISTEN_TIMEOUT = 401202
+        self.LISTEN_NOISE = 2  # 2_16
+        self.MAX_WITHOUT_CLOCK_CORRECTION_PASSIVE = 10
+        self.MAX_WITHOUT_CLOCK_CORRECTION_FATAL = 14
+        self.MICRO_PER_CYCLE = 200000
+        self.Macro_Per_Cycle = 5000
+        self.SYNC_NODE_MAX = 8
+        # ECU
+        self.MICRO_INITIAL_OFFSET_A = 31
+        self.MICRO_INITIAL_OFFSET_B = 31
+        self.MACRO_INITIAL_OFFSET_A = 11
+        self.MACRO_INITIAL_OFFSET_B = 11
+
+        self.N_I_T = 44
+        self.OFFSET_CORRECTION_START = 4981
+        #ECU
+        self.DELAY_COMPENSATION_A = 1
+        self.DELAY_COMPENSATION_B = 1
+
+        self.CLUSTER_DRIFT_DAMPING = 2
+        # ECU
+        self.DECODING_CORRECTION = 48
+        self.ACCEPTED_STARTUP_RANGE = 212
+        self.MAX_DRIFT = 601
+
+        self.STATIC_SLOT = 61
+        self.NUMBER_OF_STATIC_SLOTS = 60
+        self.MINISLOT = 10
+        self.NUMBER_OF_MINISLOTS = 129
+        self.DYNAMIC_SLOT_IDLE_PHASE = 0
+        self.ACTION_POINT_OFFSET = 9
+        self.MINISLOT_ACTION_POINT_OFFSET = 3
+        # ECU
+        self.OFFSET_CORRECTION_OUT = 378
+        self.RATE_CORRECTION_OUT = 601
+        self.EXTERN_OFFSET_CORRECTION = 0
+        self.EXTERN_RATE_CORRECTION = 0
+
+        self.config1_byte = 1
+        # if
+        self.config_byte = 0xc
+        if is_Bridging:
+            self.config_byte = 0x3c
+        self.config_byte = self.config_byte | (0x1 if enable100_a else 0x00) | (0x2 if enable100_b else 0x00) | (
+            0x40 if is_show_nullframe else 0x00)
+        # self.config_byte = 0x3f
+
+
     def set_controller_config(self,xml_,is_open_a=True, is_open_b=True, wakeup_chn=0, enable100_a=True, enable100_b=True,is_show_nullframe=True, is_Bridging=False):
         if isinstance(xml_,dict):
             self.NETWORK_MANAGEMENT_VECTOR_LENGTH = xml_['NETWORK_MANAGEMENT_VECTOR_LENGTH']
