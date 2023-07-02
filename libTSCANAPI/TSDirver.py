@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 11:21:33
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-19 10:08:29
+LastEditTime: 2023-07-01 20:01:09
 '''
 from ctypes import cdll
 
@@ -32,14 +32,17 @@ if 'windows' in _os.lower():
     # if not os.path.exists(_lib_path):
     #     _lib_path = r"D:\demo\libtosun\libtosun\windows\X64\libTSCAN.dll"
     dll = windll.LoadLibrary(_lib_path)
+    ascdll = None
 elif 'linux' in _os.lower():
     _is_linux = True
     if _arch == '64bit':
         shutil.copy(os.path.join(_curr_path, 'linux/libTSH.so'),'./')
         _lib_path = os.path.join(_curr_path, 'linux/libTSCANApiOnLinux.so')
+        _libasc_path = os.path.join(_curr_path, 'linux/libASCLog.so')
     else:
         _lib_path = None
     if _lib_path:
         dll = cdll.LoadLibrary(_lib_path)
+        ascdll = cdll.LoadLibrary(_libasc_path)
 else:
     _library = None
