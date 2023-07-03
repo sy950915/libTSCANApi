@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 11:21:33
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-01 20:01:09
+LastEditTime: 2023-07-03 00:52:56
 '''
 from ctypes import cdll
 
@@ -36,7 +36,12 @@ if 'windows' in _os.lower():
 elif 'linux' in _os.lower():
     _is_linux = True
     if _arch == '64bit':
-        shutil.copy(os.path.join(_curr_path, 'linux/libTSH.so'),'./')
+        try:
+            shutil.copy(os.path.join(_curr_path, 'linux/libTSH.so'),'/usr/lib')
+            shutil.copy(os.path.join(_curr_path, 'linux/libTSCANApiOnLinux.so'),'/usr/lib')
+            shutil.copy(os.path.join(_curr_path, 'linux/libASCLog.so'),'/usr/lib')
+        except:
+            print("need root")
         _lib_path = os.path.join(_curr_path, 'linux/libTSCANApiOnLinux.so')
         _libasc_path = os.path.join(_curr_path, 'linux/libASCLog.so')
     else:
