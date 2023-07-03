@@ -54,4 +54,4 @@ def close():
                 os.remove('./binlog.dll')
         except:
             pass
-atexit.register(close)
+# atexit.register(close)
