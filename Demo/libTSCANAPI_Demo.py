@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-03 21:14:41
+LastEditTime: 2023-07-03 06:49:18
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -145,7 +145,29 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                     self.model.removeRow(0)
                 self.model.appendRow(self.tvAddRaw(Msg))
                 self.tv_MsgData.scrollToBottom()
-            self.btn_addFilter.clicked.connect(addItem)  
+            self.offset = 0
+            self.errorTimes = -1
+            def sendCANMsg():
+                for i in range(1200):
+                    ACAN = TLIBCAN(FIdxChn=0,FDLC=8,FIdentifier=0X123,FProperties=1,FData=[(i>>8)&0xff,i&0xff,0,0,0,0,0,0])
+                    tsapp_transmit_can_async(self.HwHandle,ACAN)
+                print("send over")
+            @vthread.pool(6)
+            def recvcan(a):
+                while 1:
+                    TCANFDBuffer = (TLIBCANFD*1)()
+                    buffersize = s32(1)
+                    tsfifo_receive_canfd_msgs(self.HwHandle,TCANFDBuffer,buffersize,1,0)
+                    if buffersize.value>0:
+                        if(TCANFDBuffer[0].FIdentifier == 0x123):
+                            number = (TCANFDBuffer[0].FData[0]<<8) + TCANFDBuffer[0].FData[1]
+                            if(number - self.offset != 1):
+                                self.errorTimes += 1
+                                self.statusBar.showMessage(str(self.errorTimes))
+                                print(number - self.offset)
+                            self.offset = number
+
+            self.btn_addFilter.clicked.connect(sendCANMsg)  
 
             def scanDevices():
                 ADevCount = s32(0)
@@ -427,7 +449,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             
             def ReadRXFDMsg():
                 fifo_recv(MSGType.CANFDMSG)
-            self.btn_FifoRecvCANFDRxMsg.clicked.connect(ReadRXFDMsg)
+            self.btn_FifoRecvCANFDRxMsg.clicked.connect(recvcan)
 
             def ReadTXRXFDMsg():
                 fifo_recv(MSGType.CANFDMSG,includeTx=True)
@@ -733,6 +755,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                             if(TFlexrayBuffer[0].FCycleNumber - self.cycle != 1 and self.cycle - TFlexrayBuffer[0].FCycleNumber!=63):
                                 self.errorNumber += 1
                                 self.statusBar.showMessage(str(self.errorNumber))
+                                print(TFlexrayBuffer[0].FCycleNumber - self.cycle)
                             self.cycle = TFlexrayBuffer[0].FCycleNumber
 
             def recvFlexrayTxRxMsgs():
