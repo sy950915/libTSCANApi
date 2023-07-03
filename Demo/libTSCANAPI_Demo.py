@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-03 06:49:18
+LastEditTime: 2023-07-03 21:54:00
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -148,7 +148,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             self.offset = 0
             self.errorTimes = -1
             def sendCANMsg():
-                for i in range(1200):
+                for i in range(1000):
                     ACAN = TLIBCAN(FIdxChn=0,FDLC=8,FIdentifier=0X123,FProperties=1,FData=[(i>>8)&0xff,i&0xff,0,0,0,0,0,0])
                     tsapp_transmit_can_async(self.HwHandle,ACAN)
                 print("send over")
