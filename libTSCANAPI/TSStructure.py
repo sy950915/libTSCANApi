@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 10:21:17
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-03 05:34:55
+LastEditTime: 2023-07-03 22:00:16
 '''
 from ctypes import Structure,c_char,c_int32,c_bool,c_uint8,c_int64,c_uint64,c_uint32,c_uint16,c_double,c_char_p,byref,string_at,string_at,CDLL,CFUNCTYPE,POINTER,pointer,c_void_p,c_float,c_int16,c_int8,c_size_t
 from .TSDirver import _os
@@ -136,8 +136,10 @@ class TLIBCANFD(Structure):
 
         self.FIdxChn = FIdxChn
         self.FDLC = FDLC
-        if self.FDLC > 15:
-            self.FDLC = 15
+        try:
+            self.FDLC = DLC_DATA_BYTE_CNT.index(FDLC)
+        except:
+            self.FDLC = FDLC
         self.FIdentifier = FIdentifier
         self.FProperties = FProperties
         self.FFDProperties = FFDProperties
@@ -146,8 +148,8 @@ class TLIBCANFD(Structure):
 
     def set_data(self, data):
         lengh = len(data)
-        if lengh > DLC_DATA_BYTE_CNT(self.FDLC):
-            lengh = DLC_DATA_BYTE_CNT(self.FDLC)
+        if lengh > DLC_DATA_BYTE_CNT[self.FDLC]:
+            lengh = DLC_DATA_BYTE_CNT[self.FDLC]
         for i in range(lengh):
             self.FData[i] = data[i]
 
@@ -217,8 +219,8 @@ class TLIBLIN(Structure):
             self.FData[i] = FData[i]
     def set_data(self, data):
         lengh = len(data)
-        if lengh > DLC_DATA_BYTE_CNT(self.FDLC):
-            lengh = DLC_DATA_BYTE_CNT(self.FDLC)
+        if lengh > DLC_DATA_BYTE_CNT[self.FDLC]:
+            lengh = DLC_DATA_BYTE_CNT[self.FDLC]
         for i in range(lengh):
             self.FData[i] = data[i]
     def __str__(self):
