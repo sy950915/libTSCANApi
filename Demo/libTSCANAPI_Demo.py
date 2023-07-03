@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-26 22:54:32
+LastEditTime: 2023-07-03 00:14:21
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -161,6 +161,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                 AFSerial = c_char_p()
                 tscan_get_device_info(self.cbb_Devices.currentIndex(),AFManufacturer,AFProduct,AFSerial)  # 获取设备信息(选择要连接的设备   0)
                 ret = tsapp_connect(AFSerial,self.HwHandle)  # 连接设备(选择要连接的设备   0)
+                self.AFSerial = AFSerial
                 if ret == 0 or ret == 5:
                     self.Is_Connect = True  # 连接设备成功后，显示连接状态   1)开始计时
                     self.tb_Handle.setText(str(self.HwHandle.value))  # 显示设备号码(选择要连接的设备   0)
@@ -170,13 +171,14 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                 if self.Is_Connect: 
                     tsapp_disconnect_by_handle(self.HwHandle)  # Disconnect device. (选择要断开的设备)
             self.btn_disconnect.clicked.connect(disconnect_device)  # Disconnect button clicked. 断开连接函数    
-
+            self.AFSerial = None
             def get_Devices_Info():
                 if self.cbb_Devices.currentIndex() == -1: return
                 AFManufacturer = c_char_p()
                 AFProduct = c_char_p()
                 AFSerial = c_char_p()
                 tscan_get_device_info(self.cbb_Devices.currentIndex(),AFManufacturer,AFProduct,AFSerial)
+                self.AFSerial = AFSerial
                 self.le_AFManufacturer.setText(AFManufacturer.value.decode('utf8')) # Display device serial number. 获取设备名称   1
                 self.le_AFProduct.setText(AFProduct.value.decode('utf8'))  # Display device manufacturer. 获取设备品牌   2
                 self.le_AFSerial.setText(AFSerial.value.decode('utf8'))  # Display device serial number. 获取设备 serial number   3
@@ -715,7 +717,8 @@ class MyWindows(QMainWindow, Ui_MainWindow):
 
             def recvFlexrayMsgs():
                 # fifo_recv(MSGType.FlexrayMSG)
-                tsfifo_add_flexray_pass_filter(self.HwHandle,0,16,0,2)
+                # tsfifo_add_flexray_pass_filter(self.HwHandle,0,16,0,2)
+                tsapp_start_logging(self.AFSerial ,b"./1.csv",0)
             self.btn_FifoRecvflexrayRxMsg.clicked.connect(recvFlexrayMsgs)
 
             def recvFlexrayTxRxMsgs():
