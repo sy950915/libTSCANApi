@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-03 05:37:36
+LastEditTime: 2023-07-03 21:14:41
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -17,7 +17,7 @@ from PyQt5.QtCore import Qt
 import sys
 from Ui_libTSCAN_PyDemo import Ui_MainWindow
 from libTSCANAPI import *
-
+import vthread
 class ViewType:
     CallBackType = 0
     FifoType = 1
@@ -720,11 +720,24 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                 # tsfifo_add_flexray_pass_filter(self.HwHandle,0,16,0,2)
                 tsapp_start_logging(self.HwHandle ,b"./1.asc",0)
             self.btn_FifoRecvflexrayRxMsg.clicked.connect(recvFlexrayMsgs)
-
-            
+            self.cycle = 0
+            self.errorNumber = -1 
+            @vthread.pool(6)
+            def recv():
+                while 1:
+                    TFlexrayBuffer = (TLIBFlexray*1)()
+                    buffersize = s32(1)
+                    tsfifo_receive_flexray_msgs(self.HwHandle,TFlexrayBuffer,buffersize,1,0)
+                    if buffersize.value>0:
+                        if(TFlexrayBuffer[0].FSlotId == 36):
+                            if(TFlexrayBuffer[0].FCycleNumber - self.cycle != 1 and self.cycle - TFlexrayBuffer[0].FCycleNumber!=63):
+                                self.errorNumber += 1
+                                self.statusBar.showMessage(str(self.errorNumber))
+                            self.cycle = TFlexrayBuffer[0].FCycleNumber
 
             def recvFlexrayTxRxMsgs():
-                fifo_recv(MSGType.FlexrayMSG,includeTx=True)
+                recv()
+                # fifo_recv(MSGType.FlexrayMSG,includeTx=True)
             self.btn_FifoRecvflexrayMsg.clicked.connect(recvFlexrayTxRxMsgs)
 
             def clearFlexrayMsgs():
