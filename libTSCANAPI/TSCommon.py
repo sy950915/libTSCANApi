@@ -1930,7 +1930,7 @@ if 'windows' in _os.lower():
 else:
     
     tsapp_start_logging = ascdll.tslog_start_logging
-    tsapp_start_logging.argtypes = [c_char_p,c_char_p,s32]
+    tsapp_start_logging.argtypes = [size_t,c_char_p,s32]
     tsapp_start_logging.restype = TS_ReturnType
 
     tsapp_stop_logging = ascdll.tslog_stop_logging
