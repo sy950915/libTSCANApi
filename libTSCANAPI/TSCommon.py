@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 11:59:15
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-03 00:25:56
+LastEditTime: 2023-07-03 19:57:11
 '''
 
 from .TSStructure import *  
@@ -1918,6 +1918,15 @@ if 'windows' in _os.lower():
     tsdiag_lin_fault_memory_read.argtypes = [s32,u8,u8,s32]
     tsdiag_lin_fault_memory_read.restype = TS_ReturnType
     tsdiag_lin_fault_memory_read.errcheck = check_status_operation
+
+    tsapp_start_logging = ascdll.tslog_start_logging
+    tsapp_start_logging.argtypes = [size_t,c_char_p]
+    tsapp_start_logging.restype = TS_ReturnType
+
+    tsapp_stop_logging = ascdll.tslog_stop_logging
+    tsapp_stop_logging.argtypes = [size_t]
+    tsapp_stop_logging.restype = TS_ReturnType
+    
 else:
     
     tsapp_start_logging = ascdll.tslog_start_logging

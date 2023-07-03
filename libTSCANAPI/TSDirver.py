@@ -42,8 +42,8 @@ elif 'linux' in _os.lower():
             shutil.copy(os.path.join(_curr_path, 'linux/libASCLog.so'),'/usr/lib')
         except:
             print("need root")
-        _lib_path = os.path.join(_curr_path, 'linux/libTSCANApiOnLinux.so')
-        _libasc_path = os.path.join(_curr_path, 'linux/libASCLog.so')
+        _lib_path = 'libTSCANApiOnLinux.so'
+        _libasc_path = 'libASCLog.so'
     else:
         _lib_path = None
     if _lib_path:
