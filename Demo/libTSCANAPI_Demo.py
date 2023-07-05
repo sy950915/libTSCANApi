@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-03 21:54:00
+LastEditTime: 2023-07-04 20:05:07
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -152,7 +152,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                     ACAN = TLIBCAN(FIdxChn=0,FDLC=8,FIdentifier=0X123,FProperties=1,FData=[(i>>8)&0xff,i&0xff,0,0,0,0,0,0])
                     tsapp_transmit_can_async(self.HwHandle,ACAN)
                 print("send over")
-            @vthread.pool(6)
+            @vthread.pool(1)
             def recvcan(a):
                 while 1:
                     TCANFDBuffer = (TLIBCANFD*1)()
@@ -750,13 +750,15 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                     TFlexrayBuffer = (TLIBFlexray*1)()
                     buffersize = s32(1)
                     tsfifo_receive_flexray_msgs(self.HwHandle,TFlexrayBuffer,buffersize,1,0)
-                    if buffersize.value>0:
+                    if buffersize.value!=0:
                         if(TFlexrayBuffer[0].FSlotId == 36):
                             if(TFlexrayBuffer[0].FCycleNumber - self.cycle != 1 and self.cycle - TFlexrayBuffer[0].FCycleNumber!=63):
                                 self.errorNumber += 1
                                 self.statusBar.showMessage(str(self.errorNumber))
                                 print(TFlexrayBuffer[0].FCycleNumber - self.cycle)
                             self.cycle = TFlexrayBuffer[0].FCycleNumber
+                    else:
+                        time.sleep(0.001)
 
             def recvFlexrayTxRxMsgs():
                 recv()
