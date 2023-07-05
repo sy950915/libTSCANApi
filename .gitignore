@@ -166,3 +166,4 @@ license.txt
 readme.txt
 README.rst
 setup.py
+*.asc
