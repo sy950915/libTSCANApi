@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-11 13:29:24
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-28 11:49:47
+LastEditTime: 2023-07-05 02:54:10
 '''
 import queue
 import time
@@ -264,7 +264,7 @@ class TSMasterDevice():
                     tsapp_configure_baudrate_canfd(self.HwHandle, FChannel , Rate_baudrate,
                                                 data_baudrate,TLIBCANFDControllerType.lfdtISOCAN,TLIBCANFDControllerMode.lfdmNormal,enable_120hm)
                 else:
-                    tsapp_configure_baudrate_can(self.HwHandle, FChannel, Rate_baudrate,self.enable_120hm)
+                    tsapp_configure_baudrate_can(self.HwHandle, FChannel, Rate_baudrate,enable_120hm)
             # self.ONRxTx_Event = OnTx_RxFUNC_CANFD(self.on_tx_rx_event)
             # tsapp_register_event_canfd(self.HwHandle, self.ONRxTx_Event)
             # self.start_recv_time = time.perf_counter()

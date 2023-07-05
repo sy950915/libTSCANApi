@@ -1,3 +1,11 @@
+'''
+Author: seven 865762826@qq.com
+Date: 2023-06-28 18:42:38
+LastEditors: seven 865762826@qq.com
+LastEditTime: 2023-07-05 03:06:14
+FilePath: /libTSCANApi/libTSCANAPI/__init__.py
+Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+'''
 import os
 import shutil
 import sys
@@ -21,11 +29,12 @@ try :
         with open(file,"w",encoding="utf-8") as f:
             f.write(file_data)
     
-    if IS_ADD_PYTHON_CAN:
-        import can
-        libtosun_path = os.path.join(_curr_path, 'libtosun.py')
-        if os.path.isfile(libtosun_path) :
-            can_path = os.path.dirname(can.__file__) #for pyinstaller to find the compiled module
+    
+    import can
+    libtosun_path = os.path.join(_curr_path, 'libtosun.py')
+    can_path = os.path.dirname(can.__file__) 
+    if IS_ADD_PYTHON_CAN or os.path.isfile(os.path.join(can_path, 'interfaces/libtosun.py')):
+        if os.path.isfile(libtosun_path):
             old_str = '"socketcand": ("can.interfaces.socketcand", "SocketCanDaemonBus"),'
             new_str = old_str + '\n"libtosun":("can.interfaces.libtosun","libtosunBus"),'
             updateFile(os.path.join(can_path, 'interfaces/__init__.py'),old_str,new_str)
