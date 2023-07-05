@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 11:21:33
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-03 05:42:54
+LastEditTime: 2023-07-05 05:02:53
 '''
 from ctypes import cdll
 
@@ -42,6 +42,7 @@ elif 'linux' in _os.lower():
             shutil.copy(os.path.join(_curr_path, 'linux/libASCLog.so'),'/usr/lib')
         except:
             print("need root")
+        shutil.copy(os.path.join(_curr_path, 'linux/libTSH.so'),'./')
         _lib_path = 'libTSCANApiOnLinux.so'
         _libasc_path = 'libASCLog.so'
     else:
