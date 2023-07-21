@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-04 23:13:05
+LastEditTime: 2023-07-06 21:45:39
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -781,7 +781,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                             FrameLengthArray = (c_int * fr_trigger_len)()
                             for idx in range(fr_trigger_len):
                                 FrameLengthArray[idx] = self.FRMSG[i][idx]['FDLC']
-                                fr_trigger[idx].frame_idx=i
+                                fr_trigger[idx].frame_idx=idx
                                 fr_trigger[idx].slot_id = self.FRMSG[i][idx]['SLOT-ID']
                                 fr_trigger[idx].cycle_code = self.FRMSG[i][idx]['BASE-CYCLE']+self.FRMSG[i][idx]['CYCLE-REPETITION']
                                 if fr_trigger[idx].slot_id == fr_trigger[0].slot_id:
