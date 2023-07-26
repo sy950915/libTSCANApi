@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 11:59:15
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-05 18:15:47
+LastEditTime: 2023-07-21 10:32:04
 '''
 
 from .TSStructure import *  
@@ -1929,11 +1929,23 @@ if 'windows' in _os.lower():
     
 else:
     
-    tsapp_start_logging = ascdll.tslog_start_logging
-    tsapp_start_logging.argtypes = [size_t,c_char_p,s32]
+    tsapp_start_logging = ascdll.blf_start_logging
+    tsapp_start_logging.argtypes = [size_t,c_char_p]
     tsapp_start_logging.restype = TS_ReturnType
 
-    tsapp_stop_logging = ascdll.tslog_stop_logging
-    tsapp_stop_logging.argtypes = [s32]
+    tsapp_stop_logging = ascdll.blf_stop_logging
+    tsapp_stop_logging.argtypes = [size_t]
     tsapp_stop_logging.restype = TS_ReturnType
+    
+    tslog_write_start = ascdll.blf_write_start
+    tslog_write_start.argtypes = [c_char_p,POINTER(c_void_p)]
+    tslog_write_start.restype = TS_ReturnType
+    tslog_write_end = ascdll.blf_write_end
+    tslog_write_end.argtypes = [c_void_p]
+    tslog_write_end.restype = TS_ReturnType
+    tslog_write_flexray = ascdll.blf_write_flexray
+    tslog_write_flexray.argtypes = [c_void_p,PFlexray]
+    tslog_write_flexray.restype = TS_ReturnType
+    
+    
     
