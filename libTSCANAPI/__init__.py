@@ -33,7 +33,7 @@ try :
     import can
     libtosun_path = os.path.join(_curr_path, 'libtosun.py')
     can_path = os.path.dirname(can.__file__) 
-    if IS_ADD_PYTHON_CAN or os.path.isfile(os.path.join(can_path, 'interfaces/libtosun.py')):
+    if IS_ADD_PYTHON_CAN:
         if os.path.isfile(libtosun_path):
             old_str = '"socketcand": ("can.interfaces.socketcand", "SocketCanDaemonBus"),'
             new_str = old_str + '\n"libtosun":("can.interfaces.libtosun","libtosunBus"),'
