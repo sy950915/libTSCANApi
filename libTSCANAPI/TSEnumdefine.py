@@ -2,9 +2,23 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 10:04:48
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-04-21 10:17:38
+LastEditTime: 2023-07-26 15:08:14
 '''
 from enum import IntEnum, IntFlag
+
+
+class READ_TX_RX_DEF(IntEnum):
+    ONLY_RX_MESSAGES = 0
+    TX_RX_MESSAGES = 1
+
+class A120(IntEnum):
+    """
+    set hardware termination resistor 
+    function:
+    tsapp_configure_baudrate_canfd
+    """
+    DEABLEA120 = 0
+    ENABLEA120 = 1
 
 class MSGType(IntEnum):
     CANMSG = 0
