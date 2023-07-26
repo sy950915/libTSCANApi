@@ -21,6 +21,7 @@ def initialize_lib_tscan(AEnableFIFO: c_bool, AEnableError: c_bool,AUseHWTime:c_
 def finalize_lib_tscan()->None:
     global Is_initialize
     if Is_initialize:
+        Is_initialize = False
         TSCommon.finalize_lib_tscan()
 
 def tscan_register_event_connected(ACallBack:On_Connect_FUNC)->int:
