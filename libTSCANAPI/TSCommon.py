@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 11:59:15
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-26 16:41:11
+LastEditTime: 2023-07-26 02:28:08
 '''
 
 from .TSStructure import *  
@@ -1947,15 +1947,15 @@ else:
     tslog_write_flexray.argtypes = [c_void_p,PFlexray]
     tslog_write_flexray.restype = TS_ReturnType
 
-    tslog_write_canfd = ascdll.tslog_write_canfd
+    tslog_write_canfd = ascdll.blf_write_canfd
     tslog_write_canfd.argtypes = [c_void_p,PCANFD]
     tslog_write_canfd.restype = TS_ReturnType
 
-    tslog_write_can = ascdll.tslog_write_can
+    tslog_write_can = ascdll.blf_write_can
     tslog_write_can.argtypes = [c_void_p,PCAN]
     tslog_write_can.restype = TS_ReturnType
 
-    tslog_write_lin = ascdll.tslog_write_lin
+    tslog_write_lin = ascdll.blf_write_lin
     tslog_write_lin.argtypes = [c_void_p,PLIN]
     tslog_write_lin.restype = TS_ReturnType
     

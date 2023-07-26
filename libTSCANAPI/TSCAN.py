@@ -2,14 +2,14 @@
 Author: seven 865762826@qq.com
 Date: 2023-07-26 14:25:45
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-26 16:40:19
+LastEditTime: 2023-07-26 02:30:58
 FilePath: \libTSCANApi\libTSCANAPI\TSCAN.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
 from .TSStructure import *  
 from .TSEnumdefine import * 
 from .TSDirver import _os,dll,_curr_path,_arch,ascdll
-import TSCommon
+from . import TSCommon
 from ctypes import *
 
 Is_initialize = False
