@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-07-26 14:25:45
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-26 02:30:58
+LastEditTime: 2023-07-26 20:25:54
 FilePath: \libTSCANApi\libTSCANAPI\TSCAN.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -518,7 +518,16 @@ def tsapp_unregister_event_flexray_whandle(HWHandle:size_t,ACallBack:OnTx_RxFUNC
         return 97
     return TSCommon.tsapp_register_event_flexray_whandle(HWHandle,ACallBack)
 
-
+def tsflexray_start_net(HWHandle:size_t,AChnidx:s32,Timeout:s32):
+    global Is_initialize
+    if not Is_initialize:
+        return 97
+    return TSCommon.tsflexray_start_net(HWHandle,AChnidx,Timeout)
+def tsflexray_stop_net(HWHandle:size_t,AChnidx:s32,Timeout:s32):
+    global Is_initialize
+    if not Is_initialize:
+        return 97
+    return TSCommon.tsflexray_stop_net(HWHandle,AChnidx,Timeout)
 
 
 def tsfifo_add_flexray_pass_filter(HWHandle:size_t,AChnidx:s32,FSlotID:u16,FBaseCycle:u8,RepCycle:u8):
@@ -532,6 +541,14 @@ def tsfifo_delete_flexray_pass_filter(HWHandle:size_t,AChnidx:s32,FSlotID:u16,FB
     if not Is_initialize:
         return 97
     return TSCommon.tsfifo_delete_flexray_pass_filter(HWHandle,AChnidx,FSlotID,FBaseCycle,RepCycle)
+
+def tsflexray_set_controller_frametrigger(HWHandle: c_size_t, ANodeIndex: c_uint,AControllerConfig: TLibFlexray_controller_config,AFrameLengthArray: bytearray,AFrameNum: c_int, AFrameTrigger: TLibTrigger_def, AFrameTriggerNum: c_int,ATimeoutMs: c_int):
+    global Is_initialize
+    if not Is_initialize:
+        return 97
+    return TSCommon.tsflexray_set_controller_frametrigger(HWHandle,ANodeIndex,AControllerConfig,AFrameLengthArray,AFrameNum,AFrameTrigger,AFrameTriggerNum,ATimeoutMs)
+
+
 
 if 'windows' in _os.lower():
     def tsfifo_add_can_canfd_pass_filter(HWHandle:size_t,AChnidx:s32,FID:s32):
@@ -672,6 +689,15 @@ if 'windows' in _os.lower():
             return 97
         return TSCommon.tsdiag_can_read_data_by_identifier(pDiagModuleIndex,ADataIdentifier,AReturnArray,AReturnArraySize)
 else:
+    def tsapp_start_logging(HwHandle:size_t,fileName:c_char_p):
+        if not Is_initialize:
+            return 97
+        return TSCommon.tsapp_start_logging(HwHandle,fileName)
+    def tsapp_stop_logging(HwHandle:size_t):
+        if not Is_initialize:
+            return 97
+        return TSCommon.tsapp_stop_logging(HwHandle)
+
     def tslog_write_start(fileName:c_char_p,logHandle:c_void_p):
         if not Is_initialize:
             return 97
