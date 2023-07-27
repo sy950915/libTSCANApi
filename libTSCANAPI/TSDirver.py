@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 11:21:33
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-26 22:31:02
+LastEditTime: 2023-07-27 05:01:11
 '''
 from ctypes import *
 
@@ -43,7 +43,7 @@ elif 'linux' in _os.lower():
     else:
         _lib_path = None
     if _lib_path:
-        dll = CDLL(_lib_path,mode=DEFAULT_MODE)
-        ascdll = CDLL(_libasc_path,mode=DEFAULT_MODE)
+        dll = CDLL(_lib_path)
+        ascdll = CDLL(_libasc_path)
 else:
     _library = None
