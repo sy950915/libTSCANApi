@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-07-26 14:25:45
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-26 20:25:54
+LastEditTime: 2023-07-27 20:49:14
 FilePath: \libTSCANApi\libTSCANAPI\TSCAN.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -77,7 +77,7 @@ ADataKbps: c_double,AControllerType: TLIBCANFDControllerType, AControllerMode: T
     global Is_initialize
     if not Is_initialize:
         return 97
-    return TSCommon.tsapp_configure_baudrtsapp_configure_baudrate_canfdate_can(HWHandle,AChnIdx,ARateKbps,ADataKbps,AControllerType,AControllerMode,A120)
+    return TSCommon.tsapp_configure_baudrate_canfd(HWHandle,AChnIdx,ARateKbps,ADataKbps,AControllerType,AControllerMode,A120)
 
 def tsapp_configure_baudrate_lin(HWHandle: c_size_t, AChnIdx: CHANNEL_INDEX, ARateKbps: c_double,LINPROTOCOL:LIN_PROTOCOL):
     global Is_initialize
