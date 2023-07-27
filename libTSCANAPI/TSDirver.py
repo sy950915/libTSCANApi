@@ -2,9 +2,9 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 11:21:33
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-05 05:02:53
+LastEditTime: 2023-07-26 22:31:02
 '''
-from ctypes import cdll
+from ctypes import *
 
 
 import os
@@ -36,19 +36,14 @@ if 'windows' in _os.lower():
 elif 'linux' in _os.lower():
     _is_linux = True
     if _arch == '64bit':
-        try:
-            shutil.copy(os.path.join(_curr_path, 'linux/libTSH.so'),'/usr/lib')
-            shutil.copy(os.path.join(_curr_path, 'linux/libTSCANApiOnLinux.so'),'/usr/lib')
-            shutil.copy(os.path.join(_curr_path, 'linux/libASCLog.so'),'/usr/lib')
-        except:
-            print("need root")
-        shutil.copy(os.path.join(_curr_path, 'linux/libTSH.so'),'./')
-        _lib_path = 'libTSCANApiOnLinux.so'
-        _libasc_path = 'libASCLog.so'
+        oracle_libs = os.path.join(_curr_path, 'linux')
+        os.chdir(oracle_libs)
+        _lib_path = os.path.join(_curr_path, 'linux/libTSCANApiOnLinux.so')
+        _libasc_path = os.path.join(_curr_path, 'linux/libASCLog.so')
     else:
         _lib_path = None
     if _lib_path:
-        dll = cdll.LoadLibrary(_lib_path)
-        ascdll = cdll.LoadLibrary(_libasc_path)
+        dll = CDLL(_lib_path,mode=DEFAULT_MODE)
+        ascdll = CDLL(_libasc_path,mode=DEFAULT_MODE)
 else:
     _library = None
