@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-25 22:58:05
+LastEditTime: 2023-07-27 18:57:02
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -740,7 +740,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             def recvFlexrayMsgs():
                 # fifo_recv(MSGType.FlexrayMSG)
                 # tsfifo_add_flexray_pass_filter(self.HwHandle,0,16,0,2)
-                tsapp_start_logging(self.HwHandle ,b"./1.asc",0)
+                tsapp_start_logging(self.HwHandle ,b"./1.blf")
             self.btn_FifoRecvflexrayRxMsg.clicked.connect(recvFlexrayMsgs)
             self.cycle = 0
             self.errorNumber = -1 
