@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-28 18:42:38
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-28 15:00:18
+LastEditTime: 2023-07-28 15:02:00
 FilePath: /libTSCANApi/libTSCANAPI/__init__.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -51,8 +51,8 @@ except Exception as e:
 initialize_lib_tscan(True,True,False)
 
 def close():
-    tsapp_disconnect_all()
-    finalize_lib_tscan()
+    # tsapp_disconnect_all()
+    # finalize_lib_tscan()
     if os.path.isfile('./libTSH.so'):
         os.remove("./libTSH.so")
         os.remove("./libbinlog.so")
