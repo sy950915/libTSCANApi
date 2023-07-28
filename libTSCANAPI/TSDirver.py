@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 11:21:33
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-27 05:01:11
+LastEditTime: 2023-07-28 14:59:39
 '''
 from ctypes import *
 
@@ -37,9 +37,12 @@ elif 'linux' in _os.lower():
     _is_linux = True
     if _arch == '64bit':
         oracle_libs = os.path.join(_curr_path, 'linux')
-        os.chdir(oracle_libs)
-        _lib_path = os.path.join(_curr_path, 'linux/libTSCANApiOnLinux.so')
-        _libasc_path = os.path.join(_curr_path, 'linux/libASCLog.so')
+        shutil.copy(os.path.join(_curr_path, 'linux/libTSCANApiOnLinux.so'),'./')
+        shutil.copy(os.path.join(_curr_path, 'linux/libASCLog.so'),'./')
+        shutil.copy(os.path.join(_curr_path, 'linux/libbinlog.so'),'./')
+        shutil.copy(os.path.join(_curr_path, 'linux/libTSH.so'),'./')
+        _lib_path = './libTSCANApiOnLinux.so'
+        _libasc_path =  './libASCLog.so'
     else:
         _lib_path = None
     if _lib_path:
