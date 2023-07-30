@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-27 18:57:02
+LastEditTime: 2023-07-29 22:47:49
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -16,6 +16,7 @@ from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtCore import Qt
 import sys
 from Ui_libTSCAN_PyDemo import Ui_MainWindow
+
 from libTSCANAPI import *
 import vthread
 class ViewType:
@@ -765,11 +766,15 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                                     self.statusBar.showMessage(str(self.errorNumber))
                                     print(TFlexrayBuffer[0].FCycleNumber - self.cycle,"  timeus  = ",TFlexrayBuffer[0].FTimeUs)
                                 self.cycle = TFlexrayBuffer[0].FCycleNumber
-                    else:
-                        time.sleep(0.001)
+            @vthread.pool(6)
+            def Normal_func():
+                while 1:
+                    time.sleep(0)
 
             def recvFlexrayTxRxMsgs():
+                
                 recv()
+                Normal_func()
                 # fifo_recv(MSGType.FlexrayMSG,includeTx=True)
             self.btn_FifoRecvflexrayMsg.clicked.connect(recvFlexrayTxRxMsgs)
 
@@ -815,6 +820,8 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             
 
 if __name__ == '__main__':
+
+    
     app = QApplication(sys.argv)  # 创建应用程序
 
     window = MyWindows()

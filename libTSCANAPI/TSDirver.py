@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 11:21:33
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-28 14:59:39
+LastEditTime: 2023-07-29 21:00:27
 '''
 from ctypes import *
 
@@ -37,16 +37,17 @@ elif 'linux' in _os.lower():
     _is_linux = True
     if _arch == '64bit':
         oracle_libs = os.path.join(_curr_path, 'linux')
-        shutil.copy(os.path.join(_curr_path, 'linux/libTSCANApiOnLinux.so'),'./')
-        shutil.copy(os.path.join(_curr_path, 'linux/libASCLog.so'),'./')
-        shutil.copy(os.path.join(_curr_path, 'linux/libbinlog.so'),'./')
-        shutil.copy(os.path.join(_curr_path, 'linux/libTSH.so'),'./')
+        if not os.path.isfile('./libTSH.so'):
+            shutil.copy(os.path.join(_curr_path, 'linux/libTSCANApiOnLinux.so'),'./')
+            shutil.copy(os.path.join(_curr_path, 'linux/libASCLog.so'),'./')
+            shutil.copy(os.path.join(_curr_path, 'linux/libbinlog.so'),'./')
+            shutil.copy(os.path.join(_curr_path, 'linux/libTSH.so'),'./')
         _lib_path = './libTSCANApiOnLinux.so'
         _libasc_path =  './libASCLog.so'
     else:
         _lib_path = None
     if _lib_path:
-        dll = CDLL(_lib_path)
-        ascdll = CDLL(_libasc_path)
+        dll = cdll.LoadLibrary(_lib_path)
+        ascdll = cdll.LoadLibrary(_libasc_path)
 else:
     _library = None
