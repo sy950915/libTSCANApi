@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 11:59:15
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-05 18:15:47
+LastEditTime: 2023-07-26 02:28:08
 '''
 
 from .TSStructure import *  
@@ -20,7 +20,7 @@ tscan_get_error_description.restype  = TS_ReturnType
 
 def check_status_operation(result, function, arguments):
     """Check the status and raise """
-    if result != 0:
+    if result == 2 or result == 3:
         ret = c_char_p()
         tscan_get_error_description(result, ret)
         print("TSDriverOperationError: " + str(function.__name__) + "(" + str(arguments) + ") returned " + str(result) + ": " + str(ret.value))
@@ -1596,22 +1596,22 @@ if 'windows' in _os.lower():
     tsfifo_add_can_canfd_pass_filter.errcheck = check_status_operation
 
     # 删除CAN过滤报文
-    tsfifo_add_can_canfd_pass_filter = dll.tsfifo_add_can_canfd_pass_filter
-    tsfifo_add_can_canfd_pass_filter.argtypes = [size_t,s32,s32]
-    tsfifo_add_can_canfd_pass_filter.restype = TS_ReturnType
-    tsfifo_add_can_canfd_pass_filter.errcheck = check_status_operation
+    tsfifo_delete_can_canfd_pass_filter = dll.tsfifo_delete_can_canfd_pass_filter
+    tsfifo_delete_can_canfd_pass_filter.argtypes = [size_t,s32,s32]
+    tsfifo_delete_can_canfd_pass_filter.restype = TS_ReturnType
+    tsfifo_delete_can_canfd_pass_filter.errcheck = check_status_operation
 
     # 增加LIN过滤报文
-    tsfifo_add_can_canfd_pass_filter = dll.tsfifo_add_can_canfd_pass_filter
-    tsfifo_add_can_canfd_pass_filter.argtypes = [size_t,s32,s32]
-    tsfifo_add_can_canfd_pass_filter.restype = TS_ReturnType
-    tsfifo_add_can_canfd_pass_filter.errcheck = check_status_operation
+    tsfifo_add_lin_pass_filter = dll.tsfifo_add_lin_pass_filter
+    tsfifo_add_lin_pass_filter.argtypes = [size_t,s32,u8]
+    tsfifo_add_lin_pass_filter.restype = TS_ReturnType
+    tsfifo_add_lin_pass_filter.errcheck = check_status_operation
 
     # 删除LIN过滤报文
-    tsfifo_add_can_canfd_pass_filter = dll.tsfifo_add_can_canfd_pass_filter
-    tsfifo_add_can_canfd_pass_filter.argtypes = [size_t,s32,s32]
-    tsfifo_add_can_canfd_pass_filter.restype = TS_ReturnType
-    tsfifo_add_can_canfd_pass_filter.errcheck = check_status_operation
+    tsfifo_delete_lin_pass_filter = dll.tsfifo_delete_lin_pass_filter
+    tsfifo_delete_lin_pass_filter.argtypes = [size_t,s32,u8]
+    tsfifo_delete_lin_pass_filter.restype = TS_ReturnType
+    tsfifo_delete_lin_pass_filter.errcheck = check_status_operation
 
 
     # 设置当前硬件存在CAN的通道数量
@@ -1739,11 +1739,11 @@ if 'windows' in _os.lower():
     __tsdiag_can_create_mod.errcheck = check_status_operation
 
     __tsdiag_can_attach_to_tscan_tool = dll.tsdiag_can_attach_to_tscan_tool
-    __tsdiag_can_attach_to_tscan_tool.argtypes = [s32,size_t]
+    __tsdiag_can_attach_to_tscan_tool.argtypes = [u8,size_t]
     __tsdiag_can_attach_to_tscan_tool.restype = TS_ReturnType
     __tsdiag_can_attach_to_tscan_tool.errcheck = check_status_operation
 
-    def tsdiag_can_create(HwHandle,pDiagModuleIndex: c_int32, AChnIndex: CHANNEL_INDEX, ASupportFDCAN: u8,AMaxDLC: u8,ARequestID: c_uint32, ARequestIDIsStd: bool, AResponseID: c_uint32, AResponseIDIsStd: bool,AFunctionID: c_uint32, AFunctionIDIsStd: bool):
+    def tsdiag_can_create(HwHandle,pDiagModuleIndex: u8, AChnIndex: CHANNEL_INDEX, ASupportFDCAN: u8,AMaxDLC: u8,ARequestID: c_uint32, ARequestIDIsStd: bool, AResponseID: c_uint32, AResponseIDIsStd: bool,AFunctionID: c_uint32, AFunctionIDIsStd: bool):
         """
             udsHandle = c_int8(0)
             ChnIndex = CHANNEL_INDEX.CHN1
@@ -1929,11 +1929,35 @@ if 'windows' in _os.lower():
     
 else:
     
-    tsapp_start_logging = ascdll.tslog_start_logging
-    tsapp_start_logging.argtypes = [size_t,c_char_p,s32]
+    tsapp_start_logging = ascdll.blf_start_logging
+    tsapp_start_logging.argtypes = [size_t,c_char_p]
     tsapp_start_logging.restype = TS_ReturnType
 
-    tsapp_stop_logging = ascdll.tslog_stop_logging
-    tsapp_stop_logging.argtypes = [s32]
+    tsapp_stop_logging = ascdll.blf_stop_logging
+    tsapp_stop_logging.argtypes = [size_t]
     tsapp_stop_logging.restype = TS_ReturnType
+    
+    tslog_write_start = ascdll.blf_write_start
+    tslog_write_start.argtypes = [c_char_p,POINTER(c_void_p)]
+    tslog_write_start.restype = TS_ReturnType
+    tslog_write_end = ascdll.blf_write_end
+    tslog_write_end.argtypes = [c_void_p]
+    tslog_write_end.restype = TS_ReturnType
+    tslog_write_flexray = ascdll.blf_write_flexray
+    tslog_write_flexray.argtypes = [c_void_p,PFlexray]
+    tslog_write_flexray.restype = TS_ReturnType
+
+    tslog_write_canfd = ascdll.blf_write_canfd
+    tslog_write_canfd.argtypes = [c_void_p,PCANFD]
+    tslog_write_canfd.restype = TS_ReturnType
+
+    tslog_write_can = ascdll.blf_write_can
+    tslog_write_can.argtypes = [c_void_p,PCAN]
+    tslog_write_can.restype = TS_ReturnType
+
+    tslog_write_lin = ascdll.blf_write_lin
+    tslog_write_lin.argtypes = [c_void_p,PLIN]
+    tslog_write_lin.restype = TS_ReturnType
+    
+    
     

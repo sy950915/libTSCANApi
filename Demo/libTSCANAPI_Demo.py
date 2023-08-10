@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-06-12 09:57:16
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-04 23:13:05
+LastEditTime: 2023-07-29 22:47:49
 FilePath: \libTSCANApi\Demo\libTSCANAPI_Demo.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -16,6 +16,7 @@ from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtCore import Qt
 import sys
 from Ui_libTSCAN_PyDemo import Ui_MainWindow
+
 from libTSCANAPI import *
 import vthread
 class ViewType:
@@ -741,35 +742,51 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             def recvFlexrayMsgs():
                 # fifo_recv(MSGType.FlexrayMSG)
                 # tsfifo_add_flexray_pass_filter(self.HwHandle,0,16,0,2)
-                tsapp_start_logging(self.HwHandle ,b"./1.asc",0)
+                tsapp_start_logging(self.HwHandle ,b"./1.blf")
             self.btn_FifoRecvflexrayRxMsg.clicked.connect(recvFlexrayMsgs)
             self.cycle = 0
             self.errorNumber = -1 
             @vthread.pool(6)
             def recv():
+                self.blfHandle = c_void_p(0)
+                # tsapp_start_logging(self.HwHandle,b"./1.blf")
+                tslog_write_start(b"./1.blf",self.blfHandle)
                 while 1:
                     TFlexrayBuffer = (TLIBFlexray*1)()
                     buffersize = s32(1)
                     tsfifo_receive_flexray_msgs(self.HwHandle,TFlexrayBuffer,buffersize,1,0)
                     if buffersize.value!=0:
                         if TFlexrayBuffer[0].FCCType == 0:
+<<<<<<< HEAD
                             tsapp_transmit_flexray_async(self.HwHandle,TFlexrayBuffer[0])
+=======
+                            if(0!= tslog_write_flexray(self.blfHandle,TFlexrayBuffer[0])):
+                                print("flexray save error")
+                            TFlexrayBuffer[0].FIdxChn = 0
+                            # # tsapp_transmit_flexray_async(self.HwHandle,TFlexrayBuffer[0])
+>>>>>>> ff52beef6a323dc59d8810dce29451d7e65fafc1
                             if(TFlexrayBuffer[0].FSlotId == 36):
                                 if(TFlexrayBuffer[0].FCycleNumber - self.cycle != 1 and self.cycle - TFlexrayBuffer[0].FCycleNumber!=63):
                                     self.errorNumber += 1
                                     self.statusBar.showMessage(str(self.errorNumber))
-                                    print(TFlexrayBuffer[0].FCycleNumber - self.cycle)
+                                    print(TFlexrayBuffer[0].FCycleNumber - self.cycle,"  timeus  = ",TFlexrayBuffer[0].FTimeUs)
                                 self.cycle = TFlexrayBuffer[0].FCycleNumber
-                    else:
-                        time.sleep(0.001)
+            @vthread.pool(6)
+            def Normal_func():
+                while 1:
+                    time.sleep(0)
 
             def recvFlexrayTxRxMsgs():
+                
                 recv()
+                Normal_func()
                 # fifo_recv(MSGType.FlexrayMSG,includeTx=True)
             self.btn_FifoRecvflexrayMsg.clicked.connect(recvFlexrayTxRxMsgs)
 
             def clearFlexrayMsgs():
-                fifo_recv(MSGType.FlexrayMSG,is_read=False)
+                # tsapp_stop_logging(self.HwHandle)
+                # fifo_recv(MSGType.FlexrayMSG,is_read=False)
+                tslog_write_end(self.blfHandle)
             self.btn_FifoClearflexrayMsg.clicked.connect(clearFlexrayMsgs)
 
             def start_flexray_net():
@@ -783,7 +800,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                             FrameLengthArray = (c_int * fr_trigger_len)()
                             for idx in range(fr_trigger_len):
                                 FrameLengthArray[idx] = self.FRMSG[i][idx]['FDLC']
-                                fr_trigger[idx].frame_idx=i
+                                fr_trigger[idx].frame_idx=idx
                                 fr_trigger[idx].slot_id = self.FRMSG[i][idx]['SLOT-ID']
                                 fr_trigger[idx].cycle_code = self.FRMSG[i][idx]['BASE-CYCLE']+self.FRMSG[i][idx]['CYCLE-REPETITION']
                                 if fr_trigger[idx].slot_id == fr_trigger[0].slot_id:
@@ -808,6 +825,8 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             
 
 if __name__ == '__main__':
+
+    
     app = QApplication(sys.argv)  # 创建应用程序
 
     window = MyWindows()
@@ -815,3 +834,4 @@ if __name__ == '__main__':
     window.show()
 
     sys.exit(app.exec_())  # 程序执行循环
+
