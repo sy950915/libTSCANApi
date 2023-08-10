@@ -481,6 +481,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
             def click_find_file_path(Type:int=0,BindChn = 0):
             # 设置文件扩展名过滤，同一个类型的不同格式如xlsx和xls 用空格隔开
                 if Type == 0:
+                    
                     filename, filetype = QFileDialog.getOpenFileName(self, "选取数据库文件",filter=
                                                         "DBC(*.dbc)")
                 elif Type == 1:
@@ -752,6 +753,7 @@ class MyWindows(QMainWindow, Ui_MainWindow):
                     tsfifo_receive_flexray_msgs(self.HwHandle,TFlexrayBuffer,buffersize,1,0)
                     if buffersize.value!=0:
                         if TFlexrayBuffer[0].FCCType == 0:
+                            tsapp_transmit_flexray_async(self.HwHandle,TFlexrayBuffer[0])
                             if(TFlexrayBuffer[0].FSlotId == 36):
                                 if(TFlexrayBuffer[0].FCycleNumber - self.cycle != 1 and self.cycle - TFlexrayBuffer[0].FCycleNumber!=63):
                                     self.errorNumber += 1

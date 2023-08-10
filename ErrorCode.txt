@@ -1,0 +1,69 @@
+0          OK
+1          Index out of range
+2          Connect failed
+3          Device not found
+4          Error code not valid
+5          HID device already connected
+6          HID write data failed
+7          HID read data failed
+8          HID TX buffer overrun
+9          HID TX buffer too large
+10          HID RX packet report ID invalid
+11          HID RX packet length invalid
+12          Internal test failed
+13          RX packet lost
+14          SetupDiGetDeviceInterfaceDetail
+15          Create file failed
+16          CreateFile failed for read handle
+17          CreateFile failed for write handle
+18          HidD_SetNumInputBuffers
+19          HidD_GetPreparsedData
+20          HidP_GetCaps
+21          WriteFile
+22          GetOverlappedResult
+23          HidD_SetFeature
+24          HidD_GetFeature
+25          Send Feature Report DeviceIoControl
+26          Send Feature Report GetOverLappedResult
+27          HidD_GetManufacturerString
+28          HidD_GetProductString
+29          HidD_GetSerialNumberString
+30          HidD_GetIndexedString
+31          Transmit timed out
+32          HW DFU flash write failed
+33          HW DFU write without erase
+34          HW DFU crc check error
+35          HW DFU reset before crc check success
+36          HW packet identifier invalid
+37          HW packet length invalid
+38          HW internal test failed
+39          HW rx from pc packet lost
+40          HW tx to pc buffer overrun
+41          HW API parameter invalid
+42          DFU file load failed
+43          DFU header write failed
+44          Read status timed out
+45          Callback already exists
+46          Callback not exists
+47          Database file corrupted or not recognized
+48          database unique id not found
+49          software api parameter invalid
+50          software api generic timed out
+51          software api set hw conf failed
+52          index out of bounds
+53          rx wait timed out
+54          get io failed
+55          set io failed
+56          a replay is already on goning
+57          instance not exists
+58          can transmit frame failed
+59          no response from hardware
+60          can message not found
+61          user can recv message buffer empty
+62          total read count <> desired read count
+63          LIN configuration failed
+64          LIN frame number out of range
+65          LIN ldf configuration failed
+66          LIN ldf configuration command error
+67          Key not ready
+68          Reserved failed
