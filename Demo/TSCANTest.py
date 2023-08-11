@@ -46,12 +46,15 @@ class TSCANTest(threading.Thread):
 if __name__ == "__main__":
     HwHandle = size_t(0)
     initialize_lib_tscan(True,True,False)
-    tsapp_connect(b"",HwHandle)
-    for i in range(12):
-        print(f"-----------------{i}---------------------------")
-        TSCANMsg = TSCANTest(i,HwHandle)
-        TSCANMsg.start() 
-        time.sleep(2)
+    for i in range(10):
+        tsapp_connect(b"",HwHandle)
+        for i in range(12):
+            print(f"-----------------{i}---------------------------")
+            TSCANMsg = TSCANTest(i,HwHandle)
+            TSCANMsg.start() 
+            time.sleep(1)
+        tsapp_disconnect_by_handle(HwHandle)
+        time.sleep(3)
     while True:
         time.sleep(0.1)
 # from TSMasterAPI import *

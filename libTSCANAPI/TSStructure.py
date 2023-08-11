@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 10:21:17
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-03 22:00:16
+LastEditTime: 2023-08-11 13:07:07
 '''
 from ctypes import Structure,c_char,c_int32,c_bool,c_uint8,c_int64,c_uint64,c_uint32,c_uint16,c_double,c_char_p,byref,string_at,string_at,CDLL,CFUNCTYPE,POINTER,pointer,c_void_p,c_float,c_int16,c_int8,c_size_t
 from .TSDirver import _os
@@ -11,6 +11,7 @@ if 'windows' in _os.lower():
 
 u8 = c_uint8
 pu8 = POINTER(c_uint8)
+
 s8 = c_int8
 ps8 = POINTER(c_int8)
 

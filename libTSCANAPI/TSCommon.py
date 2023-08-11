@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 11:59:15
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-07-26 02:28:08
+LastEditTime: 2023-08-11 13:05:50
 '''
 
 from .TSStructure import *  
@@ -1795,9 +1795,10 @@ if 'windows' in _os.lower():
 
     # 请求并接收数据
     tstp_can_request_and_get_response = dll.tstp_can_request_and_get_response
-    tstp_can_send_request.argtypes = [u8,pu8,s32,pu8,ps32]
-    tstp_can_send_request.restype = TS_ReturnType
-    tstp_can_send_request.errcheck = check_status_operation
+    tstp_can_request_and_get_response.argtypes = [u8,pu8,s32,pu8,ps32]
+    tstp_can_request_and_get_response.restype = TS_ReturnType
+    tstp_can_request_and_get_response.errcheck = check_status_operation
+
 
     # 相关诊断服务
     # 10 服务
