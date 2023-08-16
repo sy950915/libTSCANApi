@@ -2,7 +2,7 @@
 Author: seven 865762826@qq.com
 Date: 2023-04-21 10:21:17
 LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-08-11 13:07:07
+LastEditTime: 2023-08-15 20:21:51
 '''
 from ctypes import Structure,c_char,c_int32,c_bool,c_uint8,c_int64,c_uint64,c_uint32,c_uint16,c_double,c_char_p,byref,string_at,string_at,CDLL,CFUNCTYPE,POINTER,pointer,c_void_p,c_float,c_int16,c_int8,c_size_t
 from .TSDirver import _os
@@ -11,7 +11,6 @@ if 'windows' in _os.lower():
 
 u8 = c_uint8
 pu8 = POINTER(c_uint8)
-
 s8 = c_int8
 ps8 = POINTER(c_int8)
 
@@ -293,13 +292,16 @@ class TLIBFlexray(Structure):
         
         field_strings.append(f"FRChannel: {FRChannel}")
 
-        FIdentifier = f"SlotID: {self.FSlotId}"
+        FIdentifier = "Dir:" + ("Tx   " if self.FDir ==1 else "Rx   ") + f"SlotID: {self.FSlotId}"
 
         field_strings.append(FIdentifier.rjust(12, " "))
         field_strings.append(str(self.FCycleNumber).rjust(2, " "))
         field_strings.append(f"DL: {self.FActualPayloadLength}")
         data_strings = []
-        for i in range(self.FActualPayloadLength):
+        datalen = self.FActualPayloadLength
+        if datalen>254:
+            datalen = 254
+        for i in range(datalen):
             data_strings.append(f"{self.FData[i]:02x}")
         field_strings.append(" ".join(data_strings).ljust(24, " "))
         return "    ".join(field_strings).strip()
