@@ -237,7 +237,7 @@ example:
 Returns:
     error code
 """
-tslin_set_node_funtiontype = dll.tslin_set_node_funtiontype
+tslin_set_node_funtiontype = dll.tslin_set_node_functiontype
 tslin_set_node_funtiontype.argtypes=[size_t,s32, u8]
 tslin_set_node_funtiontype.restype = TS_ReturnType
 tslin_set_node_funtiontype.errcheck = check_status_operation
@@ -1928,37 +1928,37 @@ if 'windows' in _os.lower():
     # tsapp_stop_logging.argtypes = [size_t]
     # tsapp_stop_logging.restype = TS_ReturnTypes
     
-else:
+# else:
     
-    tsapp_start_logging = ascdll.blf_start_logging
-    tsapp_start_logging.argtypes = [size_t,c_char_p]
-    tsapp_start_logging.restype = TS_ReturnType
+#     tsapp_start_logging = ascdll.blf_start_logging
+#     tsapp_start_logging.argtypes = [size_t,c_char_p]
+#     tsapp_start_logging.restype = TS_ReturnType
 
-    tsapp_stop_logging = ascdll.blf_stop_logging
-    tsapp_stop_logging.argtypes = [size_t]
-    tsapp_stop_logging.restype = TS_ReturnType
+#     tsapp_stop_logging = ascdll.blf_stop_logging
+#     tsapp_stop_logging.argtypes = [size_t]
+#     tsapp_stop_logging.restype = TS_ReturnType
     
-    tslog_write_start = ascdll.blf_write_start
-    tslog_write_start.argtypes = [c_char_p,POINTER(c_void_p)]
-    tslog_write_start.restype = TS_ReturnType
-    tslog_write_end = ascdll.blf_write_end
-    tslog_write_end.argtypes = [c_void_p]
-    tslog_write_end.restype = TS_ReturnType
-    tslog_write_flexray = ascdll.blf_write_flexray
-    tslog_write_flexray.argtypes = [c_void_p,PFlexray]
-    tslog_write_flexray.restype = TS_ReturnType
+#     tslog_write_start = ascdll.blf_write_start
+#     tslog_write_start.argtypes = [c_char_p,POINTER(c_void_p)]
+#     tslog_write_start.restype = TS_ReturnType
+#     tslog_write_end = ascdll.blf_write_end
+#     tslog_write_end.argtypes = [c_void_p]
+#     tslog_write_end.restype = TS_ReturnType
+#     tslog_write_flexray = ascdll.blf_write_flexray
+#     tslog_write_flexray.argtypes = [c_void_p,PFlexray]
+#     tslog_write_flexray.restype = TS_ReturnType
 
-    tslog_write_canfd = ascdll.blf_write_canfd
-    tslog_write_canfd.argtypes = [c_void_p,PCANFD]
-    tslog_write_canfd.restype = TS_ReturnType
+#     tslog_write_canfd = ascdll.blf_write_canfd
+#     tslog_write_canfd.argtypes = [c_void_p,PCANFD]
+#     tslog_write_canfd.restype = TS_ReturnType
 
-    tslog_write_can = ascdll.blf_write_can
-    tslog_write_can.argtypes = [c_void_p,PCAN]
-    tslog_write_can.restype = TS_ReturnType
+#     tslog_write_can = ascdll.blf_write_can
+#     tslog_write_can.argtypes = [c_void_p,PCAN]
+#     tslog_write_can.restype = TS_ReturnType
 
-    tslog_write_lin = ascdll.blf_write_lin
-    tslog_write_lin.argtypes = [c_void_p,PLIN]
-    tslog_write_lin.restype = TS_ReturnType
+#     tslog_write_lin = ascdll.blf_write_lin
+#     tslog_write_lin.argtypes = [c_void_p,PLIN]
+#     tslog_write_lin.restype = TS_ReturnType
     
     
     
