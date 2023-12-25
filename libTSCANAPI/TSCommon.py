@@ -1589,6 +1589,162 @@ tsfifo_delete_flexray_pass_filter.errcheck = check_status_operation
 
 # only windows supported now
 if 'windows' in _os.lower():
+        # lin 调度表
+    '''
+    激活调度表报文发送
+
+    Args:
+        Handle (size_t): 设备句柄
+        ACHNidx (int) : 通道索引
+        AID  (u8) : LIN报文ID
+        Aidx (int) :调度表索引
+
+    Returns:
+        error code
+    tslin_active_frame_in_schedule_table(Handle,0,0x11,0)
+    '''
+    tslin_active_frame_in_schedule_table = dll.tslin_active_frame_in_schedule_table
+    tslin_active_frame_in_schedule_table.argtypes=[size_t,s32,u8,s32]
+    tslin_active_frame_in_schedule_table.restype = TS_ReturnType
+    tslin_active_frame_in_schedule_table.errcheck = check_status_operation
+
+    '''
+    停止调度表报文发送
+    Args:
+        Handle (size_t): 设备句柄
+        ACHNidx (int) : 通道索引
+        AID  (u8) : LIN报文ID
+        Aidx (int) :调度表索引
+
+    Returns:
+        error code
+    tslin_deactive_frame_in_schedule_table(Handle,0,0x11,0)
+    '''
+    tslin_deactive_frame_in_schedule_table = dll.tslin_active_frame_in_schedule_table
+    tslin_deactive_frame_in_schedule_table.argtypes=[size_t,s32,u8,s32]
+    tslin_deactive_frame_in_schedule_table.restype = TS_ReturnType
+    tslin_deactive_frame_in_schedule_table.errcheck = check_status_operation
+
+
+    '''
+    开始添加调度表发送报文
+    Args:
+        Handle (size_t): 设备句柄
+        Aidx (int) :通道索引
+
+    Returns:
+        error code
+    tslin_batch_set_schedule_start(Handle,0)
+    '''
+    tslin_batch_set_schedule_start = dll.tslin_batch_set_schedule_start
+    tslin_batch_set_schedule_start.argtypes=[size_t,s32]
+    tslin_batch_set_schedule_start.restype = TS_ReturnType
+    tslin_batch_set_schedule_start.errcheck = check_status_operation
+
+
+    '''
+    停止添加调度表发送报文
+    Args:
+        Handle (size_t): 设备句柄
+        Aidx (int) :通道索引
+
+    Returns:
+        error code
+    tslin_batch_set_schedule_end(Handle,0)
+    '''
+    tslin_batch_set_schedule_end = dll.tslin_batch_set_schedule_end
+    tslin_batch_set_schedule_end.argtypes=[size_t,s32]
+    tslin_batch_set_schedule_end.restype = TS_ReturnType
+    tslin_batch_set_schedule_end.errcheck = check_status_operation
+
+    '''
+    添加调度表发送报文
+    Args:
+        Handle (size_t): 设备句柄
+        Aidx (int) :通道索引
+        ALIN (TLIBLIN) :报文
+        ADelayMs (u8) :延迟时间
+    Returns:
+        error code
+    ALIN = TLIBLIN(0,8,0X11,1,[1,2,3,4,5,6,7,8])
+    tslin_batch_add_schedule_frame(Handle,0,ALIN,20)
+    ALIN = TLIBLIN(0,8,0X12,0,[1,2,3,4,5,6,7,8])
+    tslin_batch_add_schedule_frame(Handle,0,ALIN,20)
+    '''
+    tslin_batch_add_schedule_frame = dll.tslin_batch_add_schedule_frame
+    tslin_batch_add_schedule_frame.argtypes=[size_t,s32,PLIN,u8]
+    tslin_batch_add_schedule_frame.restype = TS_ReturnType
+    tslin_batch_add_schedule_frame.errcheck = check_status_operation
+
+    '''
+    清除通道调度表
+    Args:
+        Handle (size_t): 设备句柄
+        Aidx (int) :通道索引
+    Returns:
+        error code
+    tslin_clear_schedule_tables(Handle,0)
+    '''
+    tslin_clear_schedule_tables = dll.tslin_clear_schedule_tables
+    tslin_clear_schedule_tables.argtypes=[size_t,s32]
+    tslin_clear_schedule_tables.restype = TS_ReturnType
+    tslin_clear_schedule_tables.errcheck = check_status_operation
+
+    '''
+    启动通道调度表
+    Args:
+        Handle (size_t): 设备句柄
+        Aidx (int) :通道索引
+    Returns:
+        error code
+    tslin_start_lin_channel(Handle,0)
+    '''
+    tslin_start_lin_channel = dll.tslin_start_lin_channel
+    tslin_start_lin_channel.argtypes=[size_t,s32]
+    tslin_start_lin_channel.restype = TS_ReturnType
+    tslin_start_lin_channel.errcheck = check_status_operation
+
+    '''
+    停止通道调度表
+    Args:
+        Handle (size_t): 设备句柄
+        Aidx (int) :通道索引
+    Returns:
+        error code
+    tslin_stop_lin_channel(Handle,0)
+    '''
+    tslin_stop_lin_channel = dll.tslin_stop_lin_channel
+    tslin_stop_lin_channel.argtypes=[size_t,s32]
+    tslin_stop_lin_channel.restype = TS_ReturnType
+    tslin_stop_lin_channel.errcheck = check_status_operation
+
+    '''
+    切换通道调度表为空闲调度表
+    Args:
+        Handle (size_t): 设备句柄
+        Aidx (int) :通道索引
+    Returns:
+        error code
+    tslin_switch_idle_schedule_table(Handle,0)
+    '''
+    tslin_switch_idle_schedule_table = dll.tslin_switch_idle_schedule_table
+    tslin_switch_idle_schedule_table.argtypes=[size_t,s32]
+    tslin_switch_idle_schedule_table.restype = TS_ReturnType
+    tslin_switch_idle_schedule_table.errcheck = check_status_operation
+
+    '''
+    切换通道调度表为运行调度表
+    Args:
+        Handle (size_t): 设备句柄
+        Aidx (int) :通道索引
+    Returns:
+        error code
+    tslin_switch_idle_schedule_table(Handle,0)
+    '''
+    tslin_switch_runtime_schedule_table = dll.tslin_switch_runtime_schedule_table
+    tslin_switch_runtime_schedule_table.argtypes=[size_t,s32]
+    tslin_switch_runtime_schedule_table.restype = TS_ReturnType
+    tslin_switch_runtime_schedule_table.errcheck = check_status_operation
     # 增加CAN过滤报文
     tsfifo_add_can_canfd_pass_filter = dll.tsfifo_add_can_canfd_pass_filter
     tsfifo_add_can_canfd_pass_filter.argtypes = [size_t,s32,s32,c_bool]
