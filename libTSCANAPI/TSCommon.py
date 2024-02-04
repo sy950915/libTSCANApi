@@ -382,7 +382,7 @@ tsapp_transmit_can_sync.errcheck = check_status_operation
 argtypes: Handle,Msgid,chnidx,ISExt,APeriodMS,ATimeout
 """
 tscan_add_precise_cyclic_message = dll.tscan_add_precise_cyclic_message
-tscan_add_precise_cyclic_message.argtypes = [size_t,s32,u8,u8,float,s32]  
+tscan_add_precise_cyclic_message.argtypes = [size_t,s32,u8,u8,c_float,s32]  
 tscan_add_precise_cyclic_message.restype = TS_ReturnType
 tscan_add_precise_cyclic_message.errcheck = check_status_operation
 
