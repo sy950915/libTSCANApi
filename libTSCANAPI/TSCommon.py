@@ -377,6 +377,15 @@ tsapp_transmit_can_sync.argtypes = [size_t,PCAN,u32]
 tsapp_transmit_can_sync.restype = TS_ReturnType
 tsapp_transmit_can_sync.errcheck = check_status_operation
 
+# 高精度报文
+"""
+argtypes: Handle,Msgid,chnidx,ISExt,APeriodMS,ATimeout
+"""
+tscan_add_precise_cyclic_message = dll.tscan_add_precise_cyclic_message
+tscan_add_precise_cyclic_message.argtypes = [size_t,s32,u8,u8,float,s32]  
+tscan_add_precise_cyclic_message.restype = TS_ReturnType
+tscan_add_precise_cyclic_message.errcheck = check_status_operation
+
 
 # 增加周期发送CAN报文
 """
