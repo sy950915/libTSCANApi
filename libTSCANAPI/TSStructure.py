@@ -32,6 +32,9 @@ pdouble = POINTER(c_double)
 charpp = POINTER(c_char_p)
 size_t = c_size_t
 psize_t = POINTER(c_size_t)
+BLHANDLE = c_void_p
+PBLHANDLE = POINTER(BLHANDLE)
+
 
 
 DLC_DATA_BYTE_CNT = (
@@ -552,6 +555,72 @@ class TLibTrigger_def(Structure):
                 ("recv", c_uint8),
                 ]
 PLibTrigger_def = POINTER(TLibTrigger_def)
+
+# typedef struct VBLFileStatisticsEx_t
+# {
+#   uint32_t      mStatisticsSize;                   /* sizeof (VBLFileStatisticsEx) */
+#   uint8_t       mApplicationID;                    /* application ID */
+#   uint8_t       mApplicationMajor;                 /* application major number */
+#   uint8_t       mApplicationMinor;                 /* application minor number */
+#   uint8_t       mApplicationBuild;                 /* application build number */
+#   uint64_t      mFileSize;                         /* file size in bytes */
+#   uint64_t      mUncompressedFileSize;             /* uncompressed file size in bytes */
+#   uint32_t      mObjectCount;                      /* number of objects */
+#   uint32_t      mObjectsRead;                      /* number of objects read */
+#   SYSTEMTIME mMeasurementStartTime;             /* measurement start time */
+#   SYSTEMTIME mLastObjectTime;                   /* last object time */
+#   uint32_t      mReserved[18];                     /* reserved */
+# } VBLFileStatisticsEx;
+
+# typedef struct _SYSTEMTIME {
+#     WORD wYear;
+#     WORD wMonth;
+#     WORD wDayOfWeek;
+#     WORD wDay;
+#     WORD wHour;
+#     WORD wMinute;
+#     WORD wSecond;
+#     WORD wMilliseconds;
+#   } SYSTEMTIME, *PSYSTEMTIME, *LPSYSTEMTIME;
+
+class TSYSTEMTIME(Structure):
+    """
+    Trigger 结构体
+    作用:调度表,配置要下发的报文
+    关联函数:tsflexray_set_controller_frametrigger
+    """
+    _pack_ = 1
+    _fields_ = [("wYear", u16),
+                ("wMonth", u16),
+                ("wDayOfWeek", u16), 
+                ("wDay", u16),  
+                ("wHour", u16),
+                ("wMinute", u16),  
+                ("wSecond", u16),  
+                ("wMilliseconds", u16), 
+                ]
+PSYSTEMTIME = POINTER(TSYSTEMTIME)
+class TVBLFileStatisticsEx(Structure):
+    """
+    Trigger 结构体
+    作用:调度表,配置要下发的报文
+    关联函数:tsflexray_set_controller_frametrigger
+    """
+    _pack_ = 1
+    _fields_ = [("mStatisticsSize", u32),
+                ("mApplicationID", c_uint8),
+                ("mApplicationMajor", c_uint8), 
+                ("mApplicationMinor", c_uint8),  
+                ("mApplicationBuild", c_uint8),
+                ("mFileSize", u64),  
+                ("mUncompressedFileSize", u64),  
+                ("mObjectCount", u32), 
+                ("mObjectsRead", u32),  
+                ("mMeasurementStartTime", TSYSTEMTIME), 
+                ("mLastObjectTime", TSYSTEMTIME),  
+                ("mReserved", u32*18),
+                ]
+PVBLFileStatisticsEx = POINTER(TVBLFileStatisticsEx)
 
 
 #回调函数

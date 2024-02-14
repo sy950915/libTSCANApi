@@ -7,7 +7,7 @@ LastEditTime: 2023-08-11 13:05:50
 
 from .TSStructure import *  
 from .TSEnumdefine import * 
-from .TSDirver import _os,dll,_curr_path,_arch,ascdll
+from .TSDirver import _os,dll,_curr_path,_arch,blfdll
 from ctypes import *
 # Common Functions
 
@@ -45,6 +45,69 @@ initialize_lib_tscan.restype = None
 finalize_lib_tscan = dll.finalize_lib_tscan
 finalize_lib_tscan.argtypes = []
 finalize_lib_tscan.restype = None 
+
+
+# blf 读写函数
+internal_blf_write_start = blfdll.internal_blf_write_start
+internal_blf_write_start.argtypes = [c_char_p,PBLHANDLE,pu16,pu16,pu16,pu16,pu16,pu16,pu16]
+internal_blf_write_start.restype = TS_ReturnType 
+internal_blf_write_start.errcheck = check_status_operation
+
+blf_write_start = blfdll.blf_write_start
+blf_write_start.argtypes = [c_char_p,PBLHANDLE]
+blf_write_start.restype = TS_ReturnType 
+blf_write_start.errcheck = check_status_operation
+
+blf_write_can = blfdll.blf_write_can
+blf_write_can.argtypes = [BLHANDLE,PCAN]
+blf_write_can.restype = TS_ReturnType 
+blf_write_can.errcheck = check_status_operation
+
+blf_write_can_fd = blfdll.blf_write_can_fd
+blf_write_can_fd.argtypes = [BLHANDLE,PCANFD]
+blf_write_can_fd.restype = TS_ReturnType 
+blf_write_can_fd.errcheck = check_status_operation
+
+blf_write_lin = blfdll.blf_write_lin
+blf_write_lin.argtypes = [BLHANDLE,PLIN]
+blf_write_lin.restype = TS_ReturnType 
+blf_write_lin.errcheck = check_status_operation
+
+blf_write_flexray = blfdll.blf_write_flexray
+blf_write_flexray.argtypes = [BLHANDLE,PFlexray]
+blf_write_flexray.restype = TS_ReturnType 
+blf_write_flexray.errcheck = check_status_operation
+
+# blf_write_ethernet = blfdll.blf_write_ethernet
+# blf_write_ethernet.argtypes = [BLHANDLE]
+# blf_write_ethernet.restype = TS_ReturnType 
+# blf_write_ethernet.errcheck = check_status_operation
+
+blf_write_end = blfdll.blf_write_end
+blf_write_end.argtypes = [BLHANDLE]
+blf_write_end.restype = TS_ReturnType 
+blf_write_end.errcheck = check_status_operation
+
+blf_read_start = blfdll.blf_read_start
+blf_read_start.argtypes = [c_char_p,PBLHANDLE]
+blf_read_start.restype = TS_ReturnType 
+blf_read_start.errcheck = check_status_operation
+
+blf_read_start = blfdll.blf_read_start
+blf_read_start.argtypes = [c_char_p,PBLHANDLE,PVBLFileStatisticsEx]
+blf_read_start.restype = TS_ReturnType 
+blf_read_start.errcheck = check_status_operation
+
+blf_read_object_w_comment = blfdll.blf_read_object_w_comment
+blf_read_object_w_comment.argtypes = [BLHANDLE,ps32,ps32,c_void_p,PCAN,PLIN,PCANFD]
+blf_read_object_w_comment.restype = TS_ReturnType 
+blf_read_object_w_comment.errcheck = check_status_operation
+
+blf_read_end = blfdll.blf_read_end
+blf_read_end.argtypes = [BLHANDLE]
+blf_read_end.restype = TS_ReturnType 
+blf_read_end.errcheck = check_status_operation
+
 
 
 # 注册连接回调函数 
