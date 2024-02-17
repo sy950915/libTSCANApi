@@ -108,6 +108,14 @@ blf_read_end.argtypes = [BLHANDLE]
 blf_read_end.restype = TS_ReturnType 
 blf_read_end.errcheck = check_status_operation
 
+get_signal_value = blfdll.get_signal_value
+get_signal_value.argtypes = [pu8,PSignal]
+get_signal_value.restype = double 
+
+set_signal_value = blfdll.set_signal_value
+get_signal_value.argtypes = [pu8,PSignal,double]
+get_signal_value.restype =  None
+
 
 
 # 注册连接回调函数 

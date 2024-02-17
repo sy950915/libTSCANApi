@@ -1,33 +1,104 @@
-'''
-Author: seven 865762826@qq.com
-Date: 2023-06-13 21:14:56
-LastEditors: seven 865762826@qq.com
-LastEditTime: 2023-06-17 21:37:58
-FilePath: \libTSCANApi\Demo\test.py
-Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
-'''
-# import can
-# from ctypes import *
-# configs = [{'FChannel': 0, 'rate_baudrate': 500,
-# 'data_baudrate': 2000, 'enable_120hm': True, 'is_fd': True}, {'FChannel': 1, 'rate_baudrate': 500,
-# 'data_baudrate': 2000, 'enable_120hm': True, 'is_fd': True}, {'FChannel': 2, 'rate_baudrate': 500,
-# 'data_baudrate': 2000, 'enable_120hm': True, 'is_fd': True}, {'FChannel': 3, 'rate_baudrate': 500,
-# 'data_baudrate': 2000, 'enable_120hm': True, 'is_fd': True}]
+class TCANSignal:
+    def __init__(self, FCANSgnType, FIsIntel, FStartBit, FLength, FFactor, FOffset):
+        self.FCANSgnType = FCANSgnType
+        self.FIsIntel = FIsIntel
+        self.FStartBit = FStartBit
+        self.FLength = FLength
+        self.FFactor = FFactor
+        self.FOffset = FOffset
 
-# hwhandle = can.Bus(bustype="libtosun", configs=configs, is_include_tx=True, hwserial=b"")
+def calc_real_startbit(startbit, bitlen):
+    startbit ^= 7
+    startbit += bitlen - 1
+    startbit ^= 7
+    return startbit
 
-# msg = can.Message(channel=0,arbitration_id=0x1,is_extended_id=False, is_remote_frame=False, dlc=8, data=[1, 2, 3, 4, 5, 6, 7, 8])
+def get_signal_value(data, signal):
+    AFristCount = 0
+    AOtherCount = 0
+    AByteIdx = 0
+    AOtherByteCount = 0
+    ARawValue = 0
+    AMove = 0
+    NowValue = 0
+    AByteIdx = signal.FStartBit // 8
+    AFristCount = (AByteIdx + 1) * 8 - signal.FStartBit
+    AOtherCount = signal.FLength - AFristCount
+    AOtherByteCount = AOtherCount // 8 if AOtherCount % 8 == 0 else AOtherCount // 8 + 1
 
-# hwhandle.send(msg)
+    if not signal.FIsIntel:
+        realStartbit = calc_real_startbit(signal.FStartBit, signal.FLength)
+        AByteIdx = realStartbit // 8
+        AFristCount = (AByteIdx + 1) * 8 - realStartbit
+        AOtherCount = signal.FLength - AFristCount
+        AOtherByteCount = AOtherCount // 8 if AOtherCount % 8 == 0 else AOtherCount // 8 + 1
 
-# hwhandle.recv(1)
+    for i in range(AFristCount):
+        NowValue = (data[AByteIdx] >> (8 - i)) & 1
+        ARawValue |= (NowValue << AMove)
+        AMove += 1
+        if AMove == signal.FLength:
+            if signal.FCANSgnType == 1 and NowValue == 1:
+                ARawValue = ARawValue - ((1 << signal.FLength) - 1) - 1
+            return float(ARawValue) * signal.FFactor + signal.FOffset
 
-import os
-from ldfparser import *
-currentpath = os.path.dirname(__file__) # get current path 定义为：/home/pi/ldf/ldf.
-a = parse_ldf(currentpath+"/../DataBases/LINDemo.ldf")
-for Frame in a.frames:
-    print(Frame)
-    for Signal in Frame.signal_map:
-        print("    ",Signal[1].name,Signal[1].width,Signal[1].init_value)
-print(a)
+    for i in range(AOtherByteCount):
+        for bitidx in range(8):
+            if not signal.FIsIntel:
+                NowValue = (data[AByteIdx - i - 1] >> bitidx) & 1
+            else:
+                NowValue = (data[AByteIdx + i + 1] >> bitidx) & 1
+            ARawValue |= (NowValue << AMove)
+            AMove += 1
+            AOtherCount -= 1
+            if AOtherCount == 0:
+                if signal.FCANSgnType == 1 and NowValue == 1:
+                    ARawValue = ARawValue - ((1 << signal.FLength) - 1) - 1
+                return float(ARawValue) * signal.FFactor + signal.FOffset
+
+def set_signal_value(data, signal, value):
+    ARealValue = (value - signal.FOffset) / signal.FFactor
+    RealValue = int(ARealValue)
+    realStartbit = signal.FStartBit
+    AByteIdx = realStartbit // 8
+    AFristCount = (AByteIdx + 1) * 8 - realStartbit
+    AOtherCount = signal.FLength - AFristCount
+    AOtherByteCount = AOtherCount // 8 if AOtherCount % 8 == 0 else AOtherCount // 8 + 1
+    AMove = 0
+    NowValue = 0
+
+    if not signal.FIsIntel:
+        realStartbit = calc_real_startbit(signal.FStartBit, signal.FLength)
+        AByteIdx = realStartbit // 8
+        AFristCount = (AByteIdx + 1) * 8 - realStartbit
+        AOtherCount = signal.FLength - AFristCount
+        AOtherByteCount = AOtherCount // 8 if AOtherCount % 8 == 0 else AOtherCount // 8 + 1
+
+    for i in range(AFristCount):
+        NowValue = (RealValue >> AMove) & 1
+        data[AByteIdx] &= (0xFF - (1 << (8 - i)))
+        data[AByteIdx] |= (NowValue << (8 - i))
+        AMove += 1
+        if AMove == signal.FLength:
+            return
+
+    for i in range(AOtherByteCount):
+        for bitidx in range(8):
+            NowValue = (RealValue >> AMove) & 1
+            valueMask = 0xFF - (1 << bitidx)
+            if not signal.FIsIntel:
+                data[AByteIdx - i - 1] &= valueMask
+                data[AByteIdx - i - 1] |= (NowValue << bitidx)
+            else:
+                data[AByteIdx + i + 1] &= valueMask
+                data[AByteIdx + i + 1] |= (NowValue << bitidx)
+            AMove += 1
+            AOtherCount -= 1
+            if AOtherCount == 0:
+                return
+
+# 主程序
+canData = [0, 64, 31, 0, 0, 0, 0, 0]
+signal = TCANSignal(0, False, 12, 16, 0.1, 50)
+value = get_signal_value(canData, signal)
+print(canData)

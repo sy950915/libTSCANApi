@@ -5,7 +5,9 @@ LastEditors: seven 865762826@qq.com
 LastEditTime: 2023-08-15 20:21:51
 '''
 from ctypes import Structure,c_char,c_int32,c_bool,c_uint8,c_int64,c_uint64,c_uint32,c_uint16,c_double,c_char_p,byref,string_at,string_at,CDLL,CFUNCTYPE,POINTER,pointer,c_void_p,c_float,c_int16,c_int8,c_size_t
+# import platform
 from .TSDirver import _os
+# _arch, _os = platform.architecture()
 if 'windows' in _os.lower():
     from ctypes import WINFUNCTYPE
 
@@ -621,6 +623,39 @@ class TVBLFileStatisticsEx(Structure):
                 ("mReserved", u32*18),
                 ]
 PVBLFileStatisticsEx = POINTER(TVBLFileStatisticsEx)
+
+# typedef struct _TSignal{
+#     uint8_t FSgnType; // 0 - Unsigned, 1 - Signed, 2 - Single 32, 3 - Double 64
+#     bool FIsIntel;
+#     int32_t FStartBit;
+#     int32_t FLength;    
+#     double FFactor;
+#     double FOffset;    
+# } TSignal, *PSignal;
+
+class TSignal(Structure):
+    """
+    Trigger 结构体
+    作用:调度表,配置要下发的报文
+    关联函数:tsflexray_set_controller_frametrigger
+    """
+    _pack_ = 1
+    _fields_ = [("FSgnType", u8),
+                ("FIsIntel", c_bool),
+                ("FStartBit", s32), 
+                ("FLength", s32),  
+                ("FFactor", double),
+                ("FOffset", double),  
+                ]
+    def __init__(self,FSgnType = 0,FIsIntel=False,FStartBit=0,FLength=1,FFactor=1.0,FOffset=0):
+        self.FSgnType = FSgnType
+        self.FIsIntel = FIsIntel
+        self.FStartBit = FStartBit
+        self.FLength = FLength
+        self.FFactor = FFactor
+        self.FOffset = FOffset
+
+PSignal = POINTER(TSignal)
 
 
 #回调函数

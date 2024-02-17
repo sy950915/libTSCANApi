@@ -140,6 +140,7 @@ Signal_encoding_types {
     logical_value, 1, "Left";
     logical_value, 2, "Right";
     logical_value, 255, "Void";
+    physical_value, 0, 255, -2.0, 	0, "VehicleSpeed";
   }
   Control2 {
     logical_value, 0, "OFF";
