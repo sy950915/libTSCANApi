@@ -8,7 +8,7 @@ Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查�
 '''
 from .TSStructure import *  
 from .TSEnumdefine import * 
-from .TSDirver import _os,dll,_curr_path,_arch,ascdll
+from .TSDirver import _os,dll,_curr_path,_arch
 from . import TSCommon
 from ctypes import *
 

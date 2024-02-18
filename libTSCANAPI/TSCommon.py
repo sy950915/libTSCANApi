@@ -47,11 +47,11 @@ finalize_lib_tscan.argtypes = []
 finalize_lib_tscan.restype = None 
 
 
-# blf 读写函数
-internal_blf_write_start = blfdll.internal_blf_write_start
-internal_blf_write_start.argtypes = [c_char_p,PBLHANDLE,pu16,pu16,pu16,pu16,pu16,pu16,pu16]
-internal_blf_write_start.restype = TS_ReturnType 
-internal_blf_write_start.errcheck = check_status_operation
+# # blf 读写函数
+# internal_blf_write_start = blfdll.internal_blf_write_start
+# internal_blf_write_start.argtypes = [c_char_p,PBLHANDLE,pu16,pu16,pu16,pu16,pu16,pu16,pu16]
+# internal_blf_write_start.restype = TS_ReturnType 
+# internal_blf_write_start.errcheck = check_status_operation
 
 blf_write_start = blfdll.blf_write_start
 blf_write_start.argtypes = [c_char_p,PBLHANDLE]
