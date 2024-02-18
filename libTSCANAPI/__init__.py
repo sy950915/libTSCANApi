@@ -58,13 +58,13 @@ def close():
         os.remove("./libTSH.so")
         os.remove("./libbinlog.so")
         os.remove("./libTSCANApiOnLinux.so")
-        os.remove("./libASCLog.so")
+        os.remove("./libLog.so")
     elif os.path.isfile('./libTSH.dll'):
         try:
+            os.remove("./libTSCAN.dll")
             os.remove("./libTSH.dll")
-            if _arch == '32bit':
-                os.remove('./libLog.dll')
-                os.remove('./binlog.dll')
+            os.remove('./libLog.dll')
+            os.remove('./binlog.dll')
         except:
             pass
 atexit.register(close)
