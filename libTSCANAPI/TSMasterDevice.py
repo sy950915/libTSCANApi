@@ -358,8 +358,7 @@ class TSMasterDevice():
     def tsdiag_can_create(self, pDiagModuleIndex: c_int32, AChnIndex: CHANNEL_INDEX, ASupportFDCAN: u8,
                         AMaxDLC: u8,
                         ARequestID: c_uint32, ARequestIDIsStd: bool, AResponseID: c_uint32, AResponseIDIsStd: bool,
-                        AFunctionID: c_uint32, AFunctionIDIsStd: bool, timeout=0.1):
-        self.timeout = c_int32(int(timeout * 1000))
+                        AFunctionID: c_uint32, AFunctionIDIsStd: bool):
         try:
             dlc = self.DLC_DATA_BYTE_CNT.index(AMaxDLC)
         except:
@@ -379,13 +378,11 @@ class TSMasterDevice():
         AResdata = create_string_buffer(max_len)
         AResponseDataSize = c_uint32(len(AResdata))
 
-        r = tstp_can_request_and_get_response(pDiagModuleIndex, c_char_p(AReqDataArray), len(AReqDataArray),
-                                                AResdata, byref(AResponseDataSize), self.timeout)
+        r = tstp_can_request_and_get_response(pDiagModuleIndex, c_char_p(AReqDataArray), len(AReqDataArray),AResdata, byref(AResponseDataSize))
         return r, bytes(AResdata[:AResponseDataSize.value])
 
     def tstp_can_send_functional(self, pDiagModuleIndex: c_int32, AReqDataArray: bytearray):
-        r = tstp_can_send_functional(pDiagModuleIndex, c_char_p(AReqDataArray), len(AReqDataArray),
-                                        self.timeout)
+        r = tstp_can_send_functional(pDiagModuleIndex, c_char_p(AReqDataArray), len(AReqDataArray))
         return r
 
     def tscan_get_error_description(self, ACode):
